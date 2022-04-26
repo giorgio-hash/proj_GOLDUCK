@@ -2,6 +2,8 @@ const AWS = require('aws-sdk');
 const db = new AWS.DynamoDB();
 const s3 = new AWS.S3();
 
+var fxp = require('fast-xml-parser');
+var parser = new fxp.XMLParser();
 
 const crypto = require('crypto');
 
@@ -18,22 +20,29 @@ try {
             Body: objectData.body,
             ContentType: objectType
         };
-        await storeId('1', uuid);
+        await storeInfo(uuid, objectData.body);
         await s3.putObject(params).promise(); 
         return sendRes(200, 'File uploaded successfully');
     } catch (error) {
         return sendRes(404, error);
     } 
 };
-const storeId = (id, uuid) => {
+const storeInfo = (uuid, xml) => {
+    var jsObj = parser.parse(xml);
     var params = {
       TableName: 'risultati_gare',
       Item: {
         'id_gara' : {
-            S: id
-        },
-        'uuid' : {
             S: uuid
+        },
+        'event_name' : {
+            S: jsObj.ResultList.Event.Name
+        },
+        'start' : {
+            S: '' + jsObj.ResultList.Event.StartTime.Date + jsObj.ResultList.Event.StartTime.Time
+        },
+        'end' : {
+            S: '' + jsObj.ResultList.Event.EndTime.Date + jsObj.ResultList.Event.EndTime.Time
         }
       }
     };
