@@ -1,9 +1,11 @@
 var fs = require('fs');
 const convert = require('xml-js');
 
-const maxTime = 2005;
+const args = process.argv.slice(2);
 
-var data = fs.readFileSync('./test-result.xml', 'utf8');
+var maxTime = parseInt(args[0]);
+
+const data = fs.readFileSync('./test-result.xml', 'utf8');
 
 const options = {
     compact: true,
