@@ -18,7 +18,7 @@ jsonData.ResultList.ClassResult.forEach((classRes, index, obj) => {
 
     if (Array.isArray(classRes.PersonResult)) {
         obj[index].PersonResult
-            .filter(person => person.Result.Time == null || person.Result.Time > maxTime)
+            .filter(person => person.Result.Time == null || person.Result.Time._text > maxTime)
             .forEach(toRemove => obj[index].PersonResult.splice(obj[index].PersonResult.indexOf(toRemove), 1));
     } else {
         if (classRes.PersonResult.Result.Time != null) {
