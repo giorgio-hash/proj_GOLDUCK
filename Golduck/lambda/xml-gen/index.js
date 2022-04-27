@@ -3,33 +3,33 @@ var fxp = require('fast-xml-parser');
 var fs = require('fs');
 
 var parser = new fxp.XMLParser();
+var builder = new fxp.XMLBuilder({format: true});
 
-var maxTime = 10;
+var maxTime = 2005;
 
-var res = fs.readFileSync( './test-result.xml', function(err, data) {
-    xmlObj = parser.parse(data.toString('utf-8'));
-    xmlObj.ResultList.ClassResult.forEach(res => {
-        if (Array.isArray(res.PersonResult)){
-            res.PersonResult.forEach(pers => {
-                if(pers.Result.Time != null){
-                    if(pers.Result.Time > maxTime) {
-                        delete res.PersonResult;
-                    }
-                }
-            })
-        }else{
-            if(res.PersonResult.Result.Time != null){
-                if(res.PersonResult.Result.Time > maxTime) {
-                    delete res.PersonResult;
-                }
+var data = fs.readFileSync( './test-result.xml');
+var xmlObj = parser.parse(data.toString('utf-8'));
+
+xmlObj.ResultList.ClassResult.forEach((classRes, index, obj) => {
+
+    if (Array.isArray(classRes.PersonResult)) {
+        obj[index].PersonResult
+        .filter(person => person.Result.Time == null || person.Result.Time > maxTime)
+        .forEach(toRemove => obj[index].PersonResult.splice(obj[index].PersonResult.indexOf(toRemove), 1));
+    } else {
+        if(classRes.PersonResult.Result.Time != null) {
+            if(classRes.PersonResult.Result.Time > maxTime) {
+                delete obj[index].PersonResult;
             }
+        }else{
+            delete obj[index].PersonResult;
         }
-        
-    });
-    return xmlObj;
- });
+    }
+});
 
- fs.writeFileSync("filtred.xml", res.toString('utf-8'), 'utf8', function (err) {
+var xmlStr = builder.build(xmlObj)
+
+fs.writeFile("filtred.xml", xmlStr, 'utf8', function (err) {
     if (err) {
         console.log("An error occured while writing XML String to File.");
         return console.log(err);
