@@ -3,7 +3,7 @@ const convert = require('xml-js');
 
 const args = process.argv.slice(2);
 
-var maxTime = parseInt(args[0]);
+const maxTime = parseInt(args[0]);
 
 const data = fs.readFileSync('./test-result.xml', 'utf8');
 
@@ -14,19 +14,18 @@ const options = {
 };
 const jsonData = JSON.parse(convert.xml2json(data, options));
 
-jsonData.ResultList.ClassResult.forEach((classRes, index, obj) => {
-
+jsonData.ResultList.ClassResult.forEach(classRes => {
     if (Array.isArray(classRes.PersonResult)) {
-        obj[index].PersonResult
+        classRes.PersonResult
             .filter(person => person.Result.Time == null || parseInt(person.Result.Time["_text"]) > maxTime)
-            .forEach(toRemove => obj[index].PersonResult.splice(obj[index].PersonResult.indexOf(toRemove), 1));
+            .forEach(toRemove => classRes.PersonResult.splice(classRes.PersonResult.indexOf(toRemove), 1));
     } else {
         if (classRes.PersonResult.Result.Time != null) {
             if (parseInt(classRes.PersonResult.Result.Time["_text"]) > maxTime) {
-                delete obj[index].PersonResult;
+                delete classRes.PersonResult;
             }
         } else {
-            delete obj[index].PersonResult;
+            delete classRes.PersonResult;
         }
     }
 });
