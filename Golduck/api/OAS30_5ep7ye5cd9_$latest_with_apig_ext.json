@@ -2,7 +2,7 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "orienteering",
-    "version" : "2022-05-08 09:52:04UTC"
+    "version" : "2022-05-08 10:00:11UTC"
   },
   "servers" : [ {
     "url" : "https://5ep7ye5cd9.execute-api.us-east-1.amazonaws.com/{basePath}",
@@ -107,31 +107,6 @@
           "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:286688809255:function:uploadxml/invocations",
           "connectionType" : "INTERNET"
         }
-      }
-    }
-  },
-  "components" : {
-    "x-amazon-apigateway-integrations" : {
-      "unusedIntegration_pm7r2u9" : {
-        "payloadFormatVersion" : "2.0",
-        "type" : "aws_proxy",
-        "httpMethod" : "POST",
-        "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:286688809255:function:raceRegister/invocations",
-        "connectionType" : "INTERNET"
-      },
-      "unusedIntegration_b98zu2u" : {
-        "payloadFormatVersion" : "2.0",
-        "type" : "aws_proxy",
-        "httpMethod" : "POST",
-        "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:286688809255:function:xmluploader/invocations",
-        "connectionType" : "INTERNET"
-      },
-      "unusedIntegration_qjwxeoi" : {
-        "payloadFormatVersion" : "1.0",
-        "type" : "aws_proxy",
-        "httpMethod" : "POST",
-        "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:286688809255:function:uploadxml/invocations",
-        "connectionType" : "INTERNET"
       }
     }
   },
