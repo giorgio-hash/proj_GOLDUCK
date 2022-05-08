@@ -18,7 +18,11 @@ exports.handler = async (event) => {
       }
     }).promise();
 
-    var xml = JSON.parse(parser.xml2json(results.Body.toString('utf-8')));
+    var xml = JSON.parse(parser.xml2json(results.Body.toString('utf-8'), {
+      compact: true,
+      ignoreComment: false,
+      spaces: 2
+    }));
     var classList = xml.ResultList.ClassResult.map(classRes => {
       return classRes.Class.Name['_text'];
     });
