@@ -1,0 +1,48 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "downloadxml",
+    "version" : "2022-05-06 17:52:56UTC"
+  },
+  "servers" : [ {
+    "url" : "https://de5zpaqp4g.execute-api.us-east-1.amazonaws.com/{basePath}",
+    "variables" : {
+      "basePath" : {
+        "default" : ""
+      }
+    }
+  } ],
+  "paths" : {
+    "/downloadxml" : {
+      "get" : {
+        "responses" : {
+          "default" : {
+            "description" : "Default response for GET /downloadxml"
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "payloadFormatVersion" : "2.0",
+          "type" : "aws_proxy",
+          "httpMethod" : "POST",
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:286688809255:function:downloadxml/invocations",
+          "connectionType" : "INTERNET"
+        }
+      },
+      "x-amazon-apigateway-any-method" : {
+        "responses" : {
+          "default" : {
+            "description" : "Default response for ANY /downloadxml"
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "payloadFormatVersion" : "2.0",
+          "type" : "aws_proxy",
+          "httpMethod" : "POST",
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:286688809255:function:downloadxml/invocations",
+          "connectionType" : "INTERNET"
+        }
+      }
+    }
+  },
+  "x-amazon-apigateway-importexport-version" : "1.0"
+}
