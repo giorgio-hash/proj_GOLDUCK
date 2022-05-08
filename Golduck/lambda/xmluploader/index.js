@@ -1,61 +1,62 @@
 const AWS = require('aws-sdk');
+const parser = require('xml-js');
 const db = new AWS.DynamoDB();
 const s3 = new AWS.S3();
 
-var fxp = require('fast-xml-parser');
-var parser = new fxp.XMLParser();
 
-const crypto = require('crypto');
 
 exports.handler = async (event, context, callback) => {
-    var uuid = crypto.randomUUID();
-    const s3Bucket = "xmlres";
-    const objectName = "results-" + uuid + ".xml";
-    const objectData = event;
-    const objectType = "application/xml";
-try {
-        const params = {
-            Bucket: s3Bucket,
-            Key: objectName,
-            Body: objectData.body,
-            ContentType: objectType
-        };
-        await storeInfo(uuid, objectData.body);
-        await s3.putObject(params).promise(); 
-        return sendRes(200, 'File uploaded successfully');
-    } catch (error) {
-        return sendRes(404, error);
-    } 
-};
-const storeInfo = (uuid, xml) => {
-    var jsObj = parser.parse(xml);
-    var params = {
-      TableName: 'risultati_gare',
-      Item: {
-        'id_gara' : {
-            S: uuid
-        },
-        'event_name' : {
-            S: jsObj.ResultList.Event.Name
-        },
-        'start' : {
-            S: '' + jsObj.ResultList.Event.StartTime.Date + jsObj.ResultList.Event.StartTime.Time
-        },
-        'end' : {
-            S: '' + jsObj.ResultList.Event.EndTime.Date + jsObj.ResultList.Event.EndTime.Time
-        }
-      }
-    };
+    var token = event.queryStringParameters.token;
+    var results = await getRaceId(token);
     
-    // Call DynamoDB to add the item to the table
-    db.putItem(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-      } else {
-        console.log("Success", data);
-      }
-    });
+    if (results.Count != 1) {
+        return sendRes(404, "Invalid Token"); 
+    } else {
+        //Validate XML
+        try {
+            parser.xml2json(event.body, { compact: true, ignoreComment: false,spaces: 2})
+        } catch (error) {
+            return sendRes(404, "Invalid XML");
+        }
+        //Upload XML
+        try {
+            const params = {
+                Bucket: "xmlres",
+                Key: "results-" + results.Items[0]['race_id']['S'] + ".xml",
+                Body: event.body,
+                ContentType: "application/xml"
+                };
+            
+                await s3.putObject(params).promise();
+            
+                return sendRes(200, 'File uploaded successfully');
+            } catch (error) {
+                return sendRes(404, error);
+            } 
+        }
+};
+
+function getRaceId(token) {
+    var params = {
+        TableName: 'risultati_gare',
+        ProjectionExpression: "race_id",
+        FilterExpression: "authToken = :tok",
+        ExpressionAttributeValues: {
+            ':tok': {'S': token},
+        },
+    };
+
+    return db.scan(params, function(err, data) {
+        if (err) {
+            console.log("Error", err);
+        } else {
+            return data;
+        }
+    }).promise();
+    
 }
+
+
 
 const sendRes = (status, body) => {
     var response = {

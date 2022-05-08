@@ -1,18 +1,18 @@
 
 
-var AWS = require('aws-sdk');
-var fxp = require('fast-xml-parser');
-var s3 = new AWS.S3();
-var parser = new fxp.XMLParser();
-// Create DynamoDB service object
-//var db = new AWS.DynamoDB();
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
 
-
-
+const fxp = require('fast-xml-parser');
+const parser = new fxp.XMLParser();
 
 exports.handler = async (event) => {
     try {
-        var params = {Bucket: 'xmlres', Key: 'results-' + event.queryStringParameters.id + '.xml'};
+        var params = {
+          Bucket: 'xmlres', 
+          Key: 'results-' + event.queryStringParameters.id + '.xml'
+        };
+        
         var results = await s3.getObject(params, function(err, data) {
           if (err) {
             console.log('Error', err);
@@ -21,9 +21,13 @@ exports.handler = async (event) => {
             return data;
           }
         }).promise();
-        var xml = results.Body.toString('utf-8');
-        var jsObj = parser.parse(xml);
-        return sendRes(200, JSON.stringify(jsObj.ResultList.ClassResult));
+        
+        var xml = parser.parse(results.Body.toString('utf-8'));
+        var classList = xml.ResultList.ClassResult.map(classRes => {
+          return classRes.Class.Name;
+        });
+        
+        return sendRes(200, JSON.stringify(classList));
     }
     catch (error) {
         console.log(error);
@@ -32,24 +36,7 @@ exports.handler = async (event) => {
 };
 
 /*
-const queryXML = (id) => {
-  var params = {
-    ExpressionAttributeValues: {
-      ':id': {S: id},
-    },
-    KeyConditionExpression: 'id_gara = :id ',
-    TableName: 'risultati_gare'
-  };
-  
-  db.query(params, function(err, data) {
-    if (err) {
-      console.log("Error", err);
-    } else {
-      console.log("Success", data.Items);
-      return data.Items;
-    }
-  });
-};
+ClassResult.Class.Name
 */
 
 const sendRes = (status, body) => {
