@@ -20,7 +20,7 @@ exports.handler = async (event) => {
 
     var xml = JSON.parse(parser.xml2json(results.Body.toString('utf-8')));
     var classList = xml.ResultList.ClassResult.map(classRes => {
-      return classRes.Class.Name;
+      return classRes.Class.Name['_text'];
     });
 
     return sendRes(200, JSON.stringify(classList));
