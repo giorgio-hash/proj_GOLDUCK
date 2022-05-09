@@ -19,7 +19,7 @@ try {
         return sendRes(404, error);
     } 
 };
-const storeInfo = (uuid, token, queryString) => {
+const storeInfo = async (uuid, token, queryString) => {
     var params = {
       TableName: 'risultati_gare',
       Item: {
