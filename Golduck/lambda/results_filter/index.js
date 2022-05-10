@@ -11,7 +11,7 @@ exports.handler = async (event, context, callback) => {
     var results = await getXml(id);
 
     if (results.Count != 0) {
-        while (true) {
+        while (true) { // itera finchè s3 non restituisce il file in modo corretto
             try {
                 var xml = JSON.parse(parser.xml2json(results.Body.toString('utf-8'), {
                     compact: true,

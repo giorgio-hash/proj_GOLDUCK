@@ -13,7 +13,7 @@ exports.handler = async (event) => {
     console.log(error);
     return sendRes(404, error);
   }
-  while (true) {
+  while (true) { // itera finchè s3 non restituisce il file in modo corretto
     try {
       JSON.parse(parser.xml2json(results.Body.toString('utf-8'), {
         compact: true,
