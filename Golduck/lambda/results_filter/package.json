@@ -1,5 +1,5 @@
 {
-  "name": "node",
+  "name": "results_filter",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fast-xml-parser": "^4.0.7"
+    "xml-js": "^1.6.11"
   }
 }
