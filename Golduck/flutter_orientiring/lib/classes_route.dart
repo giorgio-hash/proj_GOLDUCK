@@ -42,6 +42,14 @@ class _ClassesRouteState extends State<ClassesRoute> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Classes'),
+        actions: <Widget>[
+          IconButton(
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Refresh',
+              onPressed: () {
+                _refreshData();
+              }),
+        ],
       ),
       body: Center(
         child: FutureBuilder<List<String>>(
@@ -49,9 +57,12 @@ class _ClassesRouteState extends State<ClassesRoute> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<String> classes = snapshot.data!;
-              return ListView.builder(
-                  itemCount: classes.length,
-                  itemBuilder: ((context, index) => Text(classes[index])));
+              return RefreshIndicator(
+                onRefresh: _refreshData,
+                child: ListView.builder(
+                    itemCount: classes.length,
+                    itemBuilder: ((context, index) => Text(classes[index]))),
+              );
             } else if (snapshot.hasError) {
               return Text('${snapshot.error}');
             }
@@ -62,5 +73,11 @@ class _ClassesRouteState extends State<ClassesRoute> {
         ),
       ),
     );
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      futureClasses = fetchClasses(widget.raceid);
+    });
   }
 }
