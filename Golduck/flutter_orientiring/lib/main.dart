@@ -42,7 +42,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    log('initiating state');
     futureRaces = fetchRaces();
   }
 
@@ -51,14 +50,14 @@ class _MyAppState extends State<MyApp> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Available races'),
-        // actions: <Widget>[
-        //   IconButton(
-        //       icon: const Icon(Icons.refresh),
-        //       tooltip: 'Refresh',
-        //       onPressed: () {
-        //         initState();
-        //       }),
-        // ],
+        actions: <Widget>[
+          IconButton(
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Refresh',
+              onPressed: () {
+                _refreshData();
+              }),
+        ],
       ),
       body: Center(
         child: FutureBuilder<List<Map<String, dynamic>>>(
@@ -67,7 +66,7 @@ class _MyAppState extends State<MyApp> {
             if (snapshot.hasData) {
               var classes = snapshot.data!;
               return RefreshIndicator(
-                onRefresh: () => fetchRaces(),
+                onRefresh: _refreshData,
                 child: ListView.builder(
                   itemCount: classes.length,
                   itemBuilder: ((context, index) => ElevatedButton(
@@ -101,5 +100,11 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      futureRaces = fetchRaces();
+    });
   }
 }
