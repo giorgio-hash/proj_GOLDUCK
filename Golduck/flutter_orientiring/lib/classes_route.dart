@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import './globals.dart';
+import 'classifiche_route.dart';
 
 Future<List<String>> fetchClasses(String raceid) async {
   final response = await http.get(Uri.parse('$apiUrl/list_classes?id=$raceid'));
@@ -60,8 +62,23 @@ class _ClassesRouteState extends State<ClassesRoute> {
               return RefreshIndicator(
                 onRefresh: _refreshData,
                 child: ListView.builder(
-                    itemCount: classes.length,
-                    itemBuilder: ((context, index) => Text(classes[index]))),
+                  itemCount: classes.length,
+                  itemBuilder: ((context, index) => ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ClassificheRoute(
+                                  widget.raceid, classes[index]),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(classes[index]),
+                        ),
+                      )),
+                ),
               );
             } else if (snapshot.hasError) {
               return Text('${snapshot.error}');
