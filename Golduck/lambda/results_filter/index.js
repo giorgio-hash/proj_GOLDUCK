@@ -46,13 +46,28 @@ exports.handler = async (event, context, callback) => {
             for (var clazzRes of xml.ResultList.ClassResult) {
                 if (clazzRes.Class.Name['_text'] != clazz)
                     continue;
-                for (var pRes of clazzRes.PersonResult) {
+                if (clazzRes.PersonResult == null)
+                    continue;
+                if (Array.isArray(clazzRes.PersonResult)) {
+                    for (var pRes of clazzRes.PersonResult) {
+                        classifica.push({
+                            "name": pRes.Person.Name.Given['_text'],
+                            "surname": pRes.Person.Name.Family['_text'],
+                            "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
+                            "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
+                            "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
+                            "status": pRes.Result.Status == null ? 'N/A' : pRes.Result.Status['_text']
+
+                        });
+                    }
+                } else {
                     classifica.push({
-                        "name": pRes.Person.Name.Given['_text'],
-                        "surname": pRes.Person.Name.Family['_text'],
-                        "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
-                        "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
-                        "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text']
+                        "name": clazzRes.PersonResult.Person.Name.Given['_text'],
+                        "surname": clazzRes.PersonResult.Person.Name.Family['_text'],
+                        "org": clazzRes.PersonResult.Organisation == null ? 'No Organisation' : clazzRes.PersonResult.Organisation.Name['_text'],
+                        "position": clazzRes.PersonResult.Result.Position == null ? 'N/A' : clazzRes.PersonResult.Result.Position['_text'],
+                        "time": clazzRes.PersonResult.Result.Time == null ? 'N/A' : clazzRes.PersonResult.Result.Time['_text'],
+                        "status": clazzRes.PersonResult.Result.Status == null ? 'N/A' : clazzRes.PersonResult.Result.Status['_text']
 
                     });
                 }
