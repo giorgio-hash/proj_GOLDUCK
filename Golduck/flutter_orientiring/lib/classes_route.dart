@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import './globals.dart';
 import 'classifiche_route.dart';
+import 'start_route.dart';
 
 Future<List<String>> fetchClasses(String raceid) async {
   final response = await http.get(Uri.parse('$apiUrl/list_classes?id=$raceid'));
@@ -24,7 +25,8 @@ Future<List<String>> fetchClasses(String raceid) async {
 
 class ClassesRoute extends StatefulWidget {
   final String raceid;
-  const ClassesRoute(this.raceid, {Key? key}) : super(key: key);
+  final String option;
+  const ClassesRoute(this.raceid, this.option, {Key? key}) : super(key: key);
 
   @override
   _ClassesRouteState createState() => _ClassesRouteState();
@@ -68,8 +70,17 @@ class _ClassesRouteState extends State<ClassesRoute> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ClassificheRoute(
-                                  widget.raceid, classes[index]),
+                              builder: (context) {
+                                if (widget.option == "Results") {
+                                  return ClassificheRoute(
+                                      widget.raceid, classes[index]);
+                                } else if (widget.option == "StartList") {
+                                  return StartRoute(
+                                      widget.raceid, classes[index]);
+                                } else {
+                                  throw Exception('Impossible Exception');
+                                }
+                              },
                             ),
                           );
                         },

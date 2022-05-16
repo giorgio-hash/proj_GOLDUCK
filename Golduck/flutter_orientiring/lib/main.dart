@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import './globals.dart';
-import './classes_route.dart';
+import './menu.dart';
 
 Future<List<Map<String, dynamic>>> fetchRaces() async {
   final response = await http.get(Uri.parse('$apiUrl/list_races'));
@@ -75,7 +74,7 @@ class _MyAppState extends State<MyApp> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                ClassesRoute(classes[index]["race_id"]),
+                                MenuRoute(classes[index]["race_id"]),
                           ),
                         );
                       },
