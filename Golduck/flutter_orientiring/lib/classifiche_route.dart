@@ -80,10 +80,7 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
                         Text(
                             '${classes[index]["position"]} - ${classes[index]["surname"]} ${classes[index]["name"]}',
                             style:
-                                TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: getColorPos(index),
-                                )),
+                                const TextStyle(fontWeight: FontWeight.bold)),
                         if (classes[index]["status"] == 'OK')
                           Text('$d')
                         else
@@ -130,17 +127,4 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
   }
 
   format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
-
-  getColorPos(int pos) {
-    if (pos == 0) {
-      return const Color.fromARGB(255, 196, 182, 32);
-    } else if (pos == 1) {
-      return const Color.fromARGB(255, 166, 166, 166);
-    } else if (pos == 2) {
-      return const Color.fromARGB(255, 116, 91, 32);
-    } else {
-      return Colors.black;
-    }
-  }
-
 }
