@@ -6,11 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import './globals.dart';
+import 'components.dart';
 
 Future<List<dynamic>> fetchStart(String raceid, String clazz) async {
-  final response =
-      await http.get(Uri.parse('$apiUrl/list_start?id=$raceid&class=$clazz'));
-
+  final response = await http.get(Uri.parse('$apiUrl/list_start?id=$raceid&class=$clazz'));
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
@@ -19,7 +18,8 @@ Future<List<dynamic>> fetchStart(String raceid, String clazz) async {
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
-    throw Exception('Start list not found');
+    throw Exception(
+        'Non è stato possibile reperire la griglia di partenza per questa gara!');
   }
 }
 
@@ -119,7 +119,10 @@ class _StartRouteState extends State<StartRoute> {
                   ),
                 );
               } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
+                return ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (context, index) =>
+                        ConnFailTile("Non è stato possibile reperire la griglia di partenza per questa gara!"));
               }
 
               // By default, show a loading spinner.

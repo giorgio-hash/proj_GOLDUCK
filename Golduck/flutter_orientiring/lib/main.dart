@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import './globals.dart';
-import './menu.dart';
+import './organizations.dart';
+import 'components.dart';
 
 Future<List<Map<String, dynamic>>> fetchRaces() async {
-  final response = await http.get(Uri.parse('$apiUrl/list_races'));
+
+  final response = await http.get(
+      Uri.parse('$apiUrl/list_races'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -44,66 +47,52 @@ class _MyAppState extends State<MyApp> {
     futureRaces = fetchRaces();
   }
 
+  Future<void> _refresh(){
+
+    setState((){
+
+      futureRaces = fetchRaces();
+
+    });
+
+    return futureRaces;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Available races'),
-        actions: <Widget>[
-          IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: 'Refresh',
-              onPressed: () {
-                _refreshData();
-              }),
-        ],
       ),
       body: Center(
+          child:RefreshIndicator(
+          color: Colors.blueAccent,
+          onRefresh: _refresh,
         child: FutureBuilder<List<Map<String, dynamic>>>(
           future: futureRaces,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              var classes = snapshot.data!;
-              return RefreshIndicator(
-                onRefresh: _refreshData,
-                child: ListView.builder(
-                  itemCount: classes.length,
-                  itemBuilder: ((context, index) => ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                MenuRoute(classes[index]["race_id"]),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(children: <Widget>[
-                          Text(classes[index]["race_date"],
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
-                          Text(classes[index]["race_name"])
-                        ]),
-                      ))),
-                ),
+              var classes = snapshot.data!; // il ! è imperativo: specifico a Dart che questa variabile non può essere null
+
+              return ListView.builder(
+                itemCount: classes.length,
+                itemBuilder: ((context, index) => nextPageButton(OrganisationsRoute(classes[index]["race_id"]),classes[index]["race_name"])),
               );
             } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
+              return ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (context,index) => ConnFailTile("${snapshot.error}")
+                  );
             }
+
+
 
             // By default, show a loading spinner.
             return const CircularProgressIndicator();
           },
         ),
-      ),
+      )
+    )
     );
-  }
-
-  Future<void> _refreshData() async {
-    setState(() {
-      futureRaces = fetchRaces();
-    });
   }
 }
