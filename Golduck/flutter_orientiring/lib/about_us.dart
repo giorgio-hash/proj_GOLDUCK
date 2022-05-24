@@ -26,16 +26,25 @@ class about_us_state extends State<about_us> {
       appBar: AppBar(
         title: const Text('About Us'),
       ),
-      body:
-      Column(
+      body: Column(
         children: [
-          Text('Stefano Gechele'),
-          Text('Giorgio Chirico'), 
-          Text('Davide Revrena'), 
-          Text('Fabio Assolari'), 
+          Image.network(
+            'https://portalebambini.it/wp-content/uploads/2015/10/orienteering1.jpg',
+            fit: BoxFit.fitWidth,
+          ),
+          Text('ORIENTEERING',
+              style: TextStyle(height: 2, fontSize: 30),
+              textAlign: TextAlign.center),
+          Text(
+            'Stefano Gechele',
+            textAlign: TextAlign.center,
+          ),
+          Text('Giorgio Chirico', textAlign: TextAlign.center),
+          Text('Davide Revrena', textAlign: TextAlign.center),
+          Text('Fabio Assolari', textAlign: TextAlign.center),
         ],
       ),
-      
+
       // floating botttom 'home'
       floatingActionButton: FloatingActionButton(
         hoverColor: Color.fromARGB(121, 133, 133, 133),

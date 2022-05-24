@@ -78,9 +78,12 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(children: <Widget>[
                         Text(
-                            '${classes[index]["position"]} - ${classes[index]["surname"]} ${classes[index]["name"]}',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
+                          '${classes[index]["position"]} - ${classes[index]["surname"]} ${classes[index]["name"]}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: getColorPos(index)
+                          ),
+                        ),
                         if (classes[index]["status"] == 'OK')
                           Text('$d')
                         else
@@ -116,6 +119,19 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
           },
         ),
       ),
+      
+      floatingActionButton: FloatingActionButton(
+        hoverColor: Color.fromARGB(121, 133, 133, 133),
+        hoverElevation: 50,
+        tooltip: 'Return to Home',
+        elevation: 12,
+        onPressed: () {
+          Navigator.pop(context); // return to classes
+          Navigator.pop(context); // return to menu
+          Navigator.pop(context); // return to home
+        },
+        child: const Icon(Icons.home),
+      ),
     );
   }
 
@@ -127,4 +143,17 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
   }
 
   format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
+
+  getColorPos(int pos) {
+    if (pos == 0) {
+      return const Color.fromARGB(255, 196, 182, 32);
+    } else if (pos == 1) {
+      return const Color.fromARGB(255, 166, 166, 166);
+    } else if (pos == 2) {
+      return const Color.fromARGB(255, 116, 91, 32);
+    } else {
+      return Colors.black;
+    }
+  }
+
 }

@@ -102,6 +102,17 @@ class _ClassesRouteState extends State<ClassesRoute> {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        hoverColor: Color.fromARGB(121, 133, 133, 133),
+        hoverElevation: 50,
+        tooltip: 'Return to Home',
+        elevation: 12,
+        onPressed: () {
+          Navigator.pop(context); //return to menu
+          Navigator.pop(context); //return to home
+        },
+        child: const Icon(Icons.home),
+      ),
     );
   }
 
@@ -136,7 +147,8 @@ class NavigationDrawer extends StatelessWidget {
     ),
     child: Column(
       children: const [
-        CircleAvatar(radius: 52, foregroundImage: NetworkImage('https://www.rete8.it/wp-content/uploads/2018/09/orienteering1-777x437.jpg')),
+        CircleAvatar(radius: 52,
+        /* foregroundImage: NetworkImage('https://www.rete8.it/wp-content/uploads/2018/09/orienteering1-777x437.jpg') */),
         Text('Orienteering APP', style: TextStyle(fontSize: 28, color: Colors.white),),
         Text('Races Results', style: TextStyle(fontSize: 15, color: Colors.white),)
       ],

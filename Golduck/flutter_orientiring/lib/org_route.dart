@@ -94,6 +94,20 @@ class _OrgRouteState extends State<OrgRoute> {
           },
         ),
       ),
+
+      floatingActionButton: FloatingActionButton(
+        hoverColor: Color.fromARGB(121, 133, 133, 133),
+        hoverElevation: 50,
+        tooltip: 'Return to Home',
+        elevation: 12,
+        onPressed: () {
+          Navigator.pop(context); // return to classifiche
+          Navigator.pop(context); // return to classes
+          Navigator.pop(context); // return to menu
+          Navigator.pop(context); // return to home
+        },
+        child: const Icon(Icons.home),
+      ),
     );
   }
 
