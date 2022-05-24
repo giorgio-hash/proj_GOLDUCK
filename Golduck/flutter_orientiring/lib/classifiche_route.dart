@@ -1,130 +1,145 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:html';
 
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_orientiring/org_route.dart';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import './globals.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-Future<List<Map<String, dynamic>>> fetchClassificaClassi(
-    String raceid, String classe) async {
-  final response =
-      await http.get(Uri.parse('$apiUrl/results?id=$raceid&class=$classe'));
+import 'Punto3/atleta.dart';
+import 'Punto3/components.dart';
+import 'globals.dart';
+
+Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
+
+  final response = await http.get(Uri.parse('$apiUrl/results_filter?id=$raceid&class=*'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
-    return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+
+
+    List<atleta> atleti = List<atleta>.from((jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>).map((e) => atleta(e["name"],e["surname"],e["org"],e["position"],e["time"],e["class"])));
+    atleti.sort((a,b) => a.surname.compareTo(b.surname) == 0? a.name.compareTo(b.name) : a.surname.compareTo(b.surname) );
+
+    List<String> classi = atleti.map((e) => e.classid).toSet().toList();
+    classi.sort((a,b) => a.compareTo(b));
+
+    Map<String, List<atleta>> atleti_per_classe = {};
+
+    for( String classe in classi ){
+      atleti_per_classe[classe] = [];
+      for(atleta a in atleti){
+        if(a.classid == classe)
+          atleti_per_classe[classe]!.add(a);
+      }
+    }
+
+    return atleti_per_classe;
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
-    throw Exception('Failed to load classes');
+    throw Exception('Failed to load organizations');
   }
+
 }
+
 
 class ClassificheRoute extends StatefulWidget {
   final String raceid;
-  final String _class;
 
-  const ClassificheRoute(this.raceid, this._class, {Key? key})
-      : super(key: key);
+  const ClassificheRoute(this.raceid, {Key? key}) : super(key: key);
 
   @override
   _ClassificheRouteState createState() => _ClassificheRouteState();
 }
 
 class _ClassificheRouteState extends State<ClassificheRoute> {
-  late Future<List<Map<String, dynamic>>> futureClassificheClassi;
-  Duration d = const Duration(seconds: 0);
+  late Future<Map<String, List<atleta>>> futureRes;
+  late DateTime lastRefresh;
+
+
+  Future<void> _refresh() {
+
+    setState((){
+
+      futureRes = fetchClasses(widget.raceid);
+    });
+
+    return futureRes;
+  }
+
   @override
   void initState() {
     super.initState();
-    futureClassificheClassi =
-        fetchClassificaClassi(widget.raceid, widget._class);
+    futureRes = fetchClasses(widget.raceid);
+    lastRefresh = DateTime.now().toLocal();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Classes'),
-        actions: <Widget>[
-          IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: 'Refresh',
-              onPressed: () {
-                _refreshData();
-              }),
-        ],
-      ),
-      body: Center(
-        child: FutureBuilder<List<Map<String, dynamic>>>(
-          future: futureClassificheClassi,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var classes = snapshot.data!;
-
-              return RefreshIndicator(
-                onRefresh: _refreshData,
-                child: ListView.builder(
-                  itemCount: classes.length,
-                  itemBuilder: ((context, index) {
-                    final d = format(
-                        Duration(seconds: int.parse(classes[index]["time"])));
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(children: <Widget>[
-                        Text(
-                            '${classes[index]["position"]} - ${classes[index]["surname"]} ${classes[index]["name"]}',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
-                        if (classes[index]["status"] == 'OK')
-                          Text('$d')
-                        else
-                          Text(classes[index]["status"]),
-                        RichText(
-                          text: TextSpan(
-                              text: '${classes[index]["org"]}',
-                              style: const TextStyle(
-                                color: Colors.blue,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => OrgRoute(
-                                          widget.raceid, classes[index]["org"]),
-                                    ),
-                                  );
-                                }),
-                        ),
-                      ]),
-                    );
-                  }),
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-
-            // By default, show a loading spinner.
-            return const CircularProgressIndicator();
-          },
+        appBar: AppBar(
+          title: const Text("risultati: filtra per classe "),
         ),
-      ),
+        body: Center(
+          child:RefreshIndicator(
+            color: Colors.blueAccent,
+            onRefresh: _refresh,
+            child: FutureBuilder<Map<String, List<atleta>>>(
+              future: futureRes,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  Map<String, List<atleta>> classi_di_atleti = snapshot.data!;
+                  lastRefresh = DateTime.now().toLocal();
+
+
+                  List<Widget> objs = [
+                    Container(
+                        margin: EdgeInsets.fromLTRB(16, 10, 16, 25),
+                        child: Text("ultimo aggiornamento:\n ${lastRefresh.toString()}", style: TextStyle(fontSize: 15.0))),
+                    ...classi_di_atleti.keys.map((classid) => ExpansionTile(
+                      title: Text(classid, style:  TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),),
+                      children: <Widget>[
+                        Column(
+                          children: _buildExpandableContent(classi_di_atleti[classid]),
+                        ),
+                      ],
+                    ))
+                  ];
+
+                  print("\n\nrisultati: ${classi_di_atleti}");
+
+                  return ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: objs.length,
+                      itemBuilder: ((context, index) => objs[index] )
+                  );
+
+                } else if (snapshot.hasError) {
+                  return ListView.builder(
+                      itemCount: 1,
+                      itemBuilder: (context,index) => ConnFailTile("${snapshot.error}")
+                  );
+                }
+
+                // By default, show a loading spinner.
+                return const CircularProgressIndicator();
+              },
+            ),
+          ),
+        ));
+  }
+}
+
+
+_buildExpandableContent(List<atleta>? lista) {
+  List<Widget> columnContent = [];
+
+  for (atleta a in lista!)
+    columnContent.add(
+        AthleteTile(a)
     );
-  }
 
-  Future<void> _refreshData() async {
-    setState(() {
-      futureClassificheClassi =
-          fetchClassificaClassi(widget.raceid, widget._class);
-    });
-  }
-
-  format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
+  return columnContent;
 }

@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_orientiring/Punto3/components.dart';
 import 'package:http/http.dart' as http;
 
 import './globals.dart';
-import 'classifiche_route.dart';
 import 'start_route.dart';
 
 Future<List<String>> fetchClasses(String raceid) async {
@@ -45,7 +44,7 @@ class _ClassesRouteState extends State<ClassesRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Classes'),
+        title: const Text('startList: Classes'),
         actions: <Widget>[
           IconButton(
               icon: const Icon(Icons.refresh),
@@ -65,30 +64,7 @@ class _ClassesRouteState extends State<ClassesRoute> {
                 onRefresh: _refreshData,
                 child: ListView.builder(
                   itemCount: classes.length,
-                  itemBuilder: ((context, index) => ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                if (widget.option == "Results") {
-                                  return ClassificheRoute(
-                                      widget.raceid, classes[index]);
-                                } else if (widget.option == "StartList") {
-                                  return StartRoute(
-                                      widget.raceid, classes[index]);
-                                } else {
-                                  throw Exception('Impossible Exception');
-                                }
-                              },
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(classes[index]),
-                        ),
-                      )),
+                  itemBuilder: ((context, index) => nextPageButton(StartRoute(widget.raceid, classes[index]),classes[index])),
                 ),
               );
             } else if (snapshot.hasError) {
