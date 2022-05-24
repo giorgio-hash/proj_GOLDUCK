@@ -1,0 +1,1 @@
+per inizializzare il progetto eseguire prima `npm install`
