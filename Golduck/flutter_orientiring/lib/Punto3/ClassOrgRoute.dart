@@ -19,7 +19,7 @@ Future<Map<String, List<atleta>>> fetchClasses(String raceid, String org) async 
 
 
     List<atleta> atleti = List<atleta>.from((jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>).map((e) => atleta(e["name"],e["surname"],e["org"],e["position"],e["time"],e["class"])));
-    atleti.sort((a,b) => a.surname.compareTo(b.surname) == 0? a.name.compareTo(b.name) : a.surname.compareTo(b.surname) );
+    atleti.sort((a,b) => a.position.compareTo(b.position));
 
     List<String> classi = atleti.map((e) => e.classid).toSet().toList();
     classi.sort((a,b) => a.compareTo(b));

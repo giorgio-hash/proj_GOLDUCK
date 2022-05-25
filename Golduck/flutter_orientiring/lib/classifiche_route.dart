@@ -19,7 +19,8 @@ Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
 
 
     List<atleta> atleti = List<atleta>.from((jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>).map((e) => atleta(e["name"],e["surname"],e["org"],e["position"],e["time"],e["class"])));
-    atleti.sort((a,b) => a.surname.compareTo(b.surname) == 0? a.name.compareTo(b.name) : a.surname.compareTo(b.surname) );
+    atleti.sort((a,b) => a.position.compareTo(b.position));
+
 
     List<String> classi = atleti.map((e) => e.classid).toSet().toList();
     classi.sort((a,b) => a.compareTo(b));
@@ -98,7 +99,7 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
                         margin: EdgeInsets.fromLTRB(16, 10, 16, 25),
                         child: Text("ultimo aggiornamento:\n ${lastRefresh.toString()}", style: TextStyle(fontSize: 15.0))),
                     ...classi_di_atleti.keys.map((classid) => ExpansionTile(
-                      title: Text(classid, style:  TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),),
+                      title: Text(classid, style:  TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic)),
                       children: <Widget>[
                         Column(
                           children: _buildExpandableContent(classi_di_atleti[classid]),
