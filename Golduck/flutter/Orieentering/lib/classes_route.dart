@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_orientiring/Punto3/components.dart';
 import 'package:http/http.dart' as http;
+import 'package:orieentering/start_route.dart';
 
 import './globals.dart';
-import 'start_route.dart';
 
 Future<List<String>> fetchClasses(String raceid) async {
   final response = await http.get(Uri.parse('$apiUrl/list_classes?id=$raceid'));
@@ -24,8 +23,7 @@ Future<List<String>> fetchClasses(String raceid) async {
 
 class ClassesRoute extends StatefulWidget {
   final String raceid;
-  final String option;
-  const ClassesRoute(this.raceid, this.option, {Key? key}) : super(key: key);
+  const ClassesRoute(this.raceid, {Key? key}) : super(key: key);
 
   @override
   _ClassesRouteState createState() => _ClassesRouteState();
@@ -44,15 +42,7 @@ class _ClassesRouteState extends State<ClassesRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('startList: Classes'),
-        actions: <Widget>[
-          IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: 'Refresh',
-              onPressed: () {
-                _refreshData();
-              }),
-        ],
+        title: const Text('Classes'),
       ),
       body: Center(
         child: FutureBuilder<List<String>>(
@@ -60,12 +50,20 @@ class _ClassesRouteState extends State<ClassesRoute> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<String> classes = snapshot.data!;
-              return RefreshIndicator(
-                onRefresh: _refreshData,
-                child: ListView.builder(
+              return ListView.builder(
                   itemCount: classes.length,
-                  itemBuilder: ((context, index) => nextPageButton(StartRoute(widget.raceid, classes[index]),classes[index])),
-                ),
+                  itemBuilder: ((context, index) => ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              StartRoute(widget.raceid, classes[index]),
+                        ),
+                      );
+                    },
+                    child: Text(classes[index]),
+                  ))
               );
             } else if (snapshot.hasError) {
               return Text('${snapshot.error}');
@@ -77,11 +75,5 @@ class _ClassesRouteState extends State<ClassesRoute> {
         ),
       ),
     );
-  }
-
-  Future<void> _refreshData() async {
-    setState(() {
-      futureClasses = fetchClasses(widget.raceid);
-    });
   }
 }
