@@ -36,7 +36,8 @@ exports.handler = async (event, context, callback) => {
                                     "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
                                     "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
                                     "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                                    "class" : elem.Class.Name['_text']
+                                    "class" : elem.Class.Name['_text'],
+                                    "status" : pRes.Result.Status['_text']
                                 });
                             }
                         }
@@ -50,7 +51,8 @@ exports.handler = async (event, context, callback) => {
                                 "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
                                 "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
                                 "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                                "class" : elem.Class.Name['_text']
+                                "class" : elem.Class.Name['_text'],
+                                "status" : pRes.Result.Status['_text']
 
                             });
                         }
@@ -72,7 +74,8 @@ exports.handler = async (event, context, callback) => {
                         "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
                         "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                        "class" : clazzRes.Class.Name['_text']
+                        "class" : clazzRes.Class.Name['_text'],
+                        "status" : pRes.Result.Status['_text']
 
                     });
                 }
@@ -84,7 +87,8 @@ exports.handler = async (event, context, callback) => {
                         "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
                         "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                        "class" : clazzRes.Class.Name['_text']
+                        "class" : clazzRes.Class.Name['_text'],
+                        "status" : pRes.Result.Status['_text']
 
                     });
                 }
@@ -105,7 +109,8 @@ exports.handler = async (event, context, callback) => {
                         "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
                         "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                        "class" : clazzRes.Class.Name['_text']
+                        "class" : clazzRes.Class.Name['_text'],
+                        "status" : pRes.Result.Status['_text']
 
                     });
                 }
@@ -117,7 +122,8 @@ exports.handler = async (event, context, callback) => {
                         "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
                         "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                        "class" : clazzRes.Class.Name['_text']
+                        "class" : clazzRes.Class.Name['_text'],
+                        "status" : pRes.Result.Status['_text']
 
                     });
                 }
