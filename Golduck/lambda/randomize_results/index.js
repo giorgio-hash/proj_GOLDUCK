@@ -38,7 +38,7 @@ exports.handler = async (event, context, callback) => {
                                     "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                                     "class" : elem.Class.Name['_text'],
                                     "status" : pRes.Result.Status['_text'],
-									"id" : pRes.Person.Id['text_']
+									"numero" : pRes.Person.Id['_text']
                                 });
                             }
                         }
@@ -54,14 +54,28 @@ exports.handler = async (event, context, callback) => {
                                 "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                                 "class" : elem.Class.Name['_text'],
                                 "status" : pRes.Result.Status['_text'],
-								"id" : pRes.Person.Id['text_']
+								"numero" : pRes.Person.Id['_text']
 
                             });
                         }
                     }
                 }
             });
+            
+            
+            
+            var rand = clubs.length>4? 2 : 1;
+            
+            for(var i=0; i<rand; i++){
+             
+                    var rand_pers = Math.floor(Math.random() * clubs.length);
+                    clubs[rand_pers]["time"] = ""+Math.floor(Math.random() *500);
+                
+            }
+            
+            
             return sendRes(200, JSON.stringify(clubs));
+            
         } else if (clazz != null && clazz != "*") {
             var classifica = new Array();
 
@@ -78,7 +92,7 @@ exports.handler = async (event, context, callback) => {
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                         "class" : clazzRes.Class.Name['_text'],
                         "status" : pRes.Result.Status['_text'],
-						"id" : pRes.Person.Id['text_']
+						"numero" : pRes.Person.Id['_text']
 
                     });
                 }
@@ -92,11 +106,23 @@ exports.handler = async (event, context, callback) => {
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                         "class" : clazzRes.Class.Name['_text'],
                         "status" : pRes.Result.Status['_text'],
-						"id" : pRes.Person.Id['text_']
+						"numero" : pRes.Person.Id['_text']
 
                     });
                 }
             }
+            
+            
+            var rand = classifica.length>4? 2 : 1;
+            
+            for(var i=0; i<rand; i++){
+             
+                    var rand_pers = Math.floor(Math.random() * classifica.length);
+                    classifica[rand_pers]["time"] = ""+Math.floor(Math.random() *500);
+                
+            }
+            
+            
 
             return sendRes(200, JSON.stringify(classifica));
 
@@ -115,7 +141,7 @@ exports.handler = async (event, context, callback) => {
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                         "class" : clazzRes.Class.Name['_text'],
                         "status" : pRes.Result.Status['_text'],
-						"id" : pRes.Person.Id['text_']
+                        "numero" : pRes.Person.Id['_text']
 
                     });
                 }
@@ -129,11 +155,23 @@ exports.handler = async (event, context, callback) => {
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                         "class" : clazzRes.Class.Name['_text'],
                         "status" : pRes.Result.Status['_text'],
-						"id" : pRes.Person.Id['text_']
+                        "numero" : pRes.Person.Id['_text']
 
                     });
                 }
             }
+            
+            
+            var rand = classifica.length>4? 2 : 1;
+            
+            for(var i=0; i<rand; i++){
+             
+                    var rand_pers = Math.floor(Math.random() * classifica.length);
+                    classifica[rand_pers]["time"] = ""+Math.floor(Math.random() *500);
+                
+            }
+            
+            
 
             return sendRes(200, JSON.stringify(classifica));
             
@@ -178,5 +216,6 @@ const sendRes = (status, body) => {
         },
         body: body
     };
+    
     return response;
 };
