@@ -7,6 +7,7 @@ exports.handler = async (event) => {
 
   var id = event.queryStringParameters.id;
   var clazz = event.queryStringParameters.class;
+  
 
   var results;
   try {
@@ -31,18 +32,49 @@ exports.handler = async (event) => {
   }
 
   var starters = new Array();
+  
+  
+  if (clazz == '*') {
+    
+  for(var classStart of xml.StartList.ClassStart) {
+    if (classStart.PersonStart != null)
+      if (!Array.isArray(classStart.PersonStart)) {
+        starters.push({
+          'name': classStart.PersonStart.Person.Name.Family['_text'],
+          'surname': classStart.PersonStart.Person.Name.Given['_text'],
+          'org': classStart.PersonStart.Organisation.Name['_text'],
+          'time': classStart.PersonStart.Start.StartTime['_text'] != null ? classStart.PersonStart.Start.StartTime['_text'] : '00.00.00',
+          'class': classStart.Class.Name['_text']
+      });
+    } else {
+      for(var personStart of classStart.PersonStart) {
+        starters.push({
+          'name': personStart.Person.Name.Family['_text'],
+          'surname': personStart.Person.Name.Given['_text'],
+          'org': personStart.Organisation.Name['_text'],
+          'time': personStart.Start.StartTime['_text'] != null ? personStart.Start.StartTime['_text'] : '00.00.00',
+          'class': classStart.Class.Name['_text']
+      });
+     }
+    }
+    }
+    return sendRes(200, JSON.stringify(starters));
+  }
+  
 
   for(var classStart of xml.StartList.ClassStart) {
-    if (classStart.Class.Name != clazz)
+    if (classStart.Class.Name['_text'] != clazz)
       continue;
     for(var personStart of classStart.PersonStart) {
 
       starters.push({
-        'name': personStart.Person.Name.Family,
-        'surname': personStart.Person.Name.Given,
-        'org': personStart.Organisation.Name,
-        'time': personStart.Start.StartTime != null ? personStart.Start.StartTime : '00.00.00'
+        'name': personStart.Person.Name.Family['_text'],
+        'surname': personStart.Person.Name.Given['_text'],
+        'org': personStart.Organisation.Name['_text'],
+        'time': personStart.Start.StartTime['_text'] != null ? personStart.Start.StartTime['_text'] : '00.00.00',
+        'class': classStart.Class.Name['_text']
     });
+    
 
     }
   }
