@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_orientiring/start_route.dart';
 
+<<<<<<< Updated upstream
 import 'classes_route.dart';
 
+=======
+import 'Punto3/components.dart';
+import 'Punto3/organizations.dart';
+import 'classifiche_route.dart';
+>>>>>>> Stashed changes
 
 class MenuRoute extends StatelessWidget {
   final String raceid;
@@ -10,6 +17,26 @@ class MenuRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
+=======
+
+    List<Widget> objs = [
+      Container(
+          margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
+          child: Text("Griglia di partenza:\n", style: TextStyle(fontSize: 15.0))),
+      nextPageButton(StartRoute(raceid),"StartList"),
+      Container(
+          margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
+          child: Text("classi in gara:\n", style: TextStyle(fontSize: 15.0))),
+      nextPageButton(ClassificheRoute(raceid),"Results"),
+      Container(
+          margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
+          child: Text("organizzazioni in gara:\n", style: TextStyle(fontSize: 15.0))),
+      nextPageButton(OrganisationsRoute(raceid),"Organizzationi")
+    ];
+
+
+>>>>>>> Stashed changes
     return Scaffold(
         appBar: AppBar(
           title: const Text('Choose an option'),
