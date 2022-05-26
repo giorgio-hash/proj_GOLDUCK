@@ -29,6 +29,7 @@ exports.handler = async (event, context, callback) => {
                 if (elem.PersonResult != null) {
                     if (Array.isArray(elem.PersonResult)) {
                         for (var pRes of elem.PersonResult) {
+<<<<<<< HEAD
                             if (pRes.Organisation != null && pRes.Organisation.Name['_text'] == org)
                                 clubs.push(pRes.Person.Name.Family['_text'] + ' ' + pRes.Person.Name.Given['_text']);
                         }
@@ -36,23 +37,79 @@ exports.handler = async (event, context, callback) => {
                     } else {
                         if (elem.PersonResult.Organisation != null && elem.PersonResult.Organisation.Name['_text'] == org)
                             clubs.push(elem.PersonResult.Person.Name.Family['_text'] + ' ' + elem.PersonResult.Person.Name.Given['_text']);
+=======
+                            if (pRes.Organisation != null && pRes.Organisation.Name['_text'] == org){
+                                clubs.push({
+                                    "name": pRes.Person.Name.Given['_text'],
+                                    "surname": pRes.Person.Name.Family['_text'],
+                                    "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
+                                    "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
+                                    "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
+                                    "class" : elem.Class.Name['_text'],
+                                    "status" : pRes.Result.Status['_text']
+                                });
+                            }
+                        }
+
+                    } else {
+                        if (elem.PersonResult.Organisation != null && elem.PersonResult.Organisation.Name['_text'] == org){
+                            var pRes = elem.PersonResult;
+                            clubs.push({
+                                "name": pRes.Person.Name.Given['_text'],
+                                "surname": pRes.Person.Name.Family['_text'],
+                                "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
+                                "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
+                                "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
+                                "class" : elem.Class.Name['_text'],
+                                "status" : pRes.Result.Status['_text']
+
+                            });
+                        }
+>>>>>>> giorgio-hash
                     }
                 }
             });
             return sendRes(200, JSON.stringify(clubs));
+<<<<<<< HEAD
         } else if (clazz != null) {
+=======
+        } else if (clazz != null && clazz != "*") {
+>>>>>>> giorgio-hash
             var classifica = new Array();
 
             for (var clazzRes of xml.ResultList.ClassResult) {
                 if (clazzRes.Class.Name['_text'] != clazz)
                     continue;
+<<<<<<< HEAD
+=======
+                if(clazzRes.PersonResult.Person){    
+                    var pRes = clazzRes.PersonResult;
+                    classifica.push({
+                        "name": pRes.Person.Name.Given['_text'],
+                        "surname": pRes.Person.Name.Family['_text'],
+                        "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
+                        "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
+                        "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
+                        "class" : clazzRes.Class.Name['_text'],
+                        "status" : pRes.Result.Status['_text']
+
+                    });
+                }
+                else
+>>>>>>> giorgio-hash
                 for (var pRes of clazzRes.PersonResult) {
                     classifica.push({
                         "name": pRes.Person.Name.Given['_text'],
                         "surname": pRes.Person.Name.Family['_text'],
                         "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
                         "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
+<<<<<<< HEAD
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text']
+=======
+                        "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
+                        "class" : clazzRes.Class.Name['_text'],
+                        "status" : pRes.Result.Status['_text']
+>>>>>>> giorgio-hash
 
                     });
                 }
@@ -60,7 +117,47 @@ exports.handler = async (event, context, callback) => {
 
             return sendRes(200, JSON.stringify(classifica));
 
+<<<<<<< HEAD
         } else {
+=======
+        } else if(clazz == "*"){
+            
+            var classifica = new Array();
+            
+            for (var clazzRes of xml.ResultList.ClassResult) {
+                if(clazzRes.PersonResult.Person){    
+                    var pRes = clazzRes.PersonResult;
+                    classifica.push({
+                        "name": pRes.Person.Name.Given['_text'],
+                        "surname": pRes.Person.Name.Family['_text'],
+                        "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
+                        "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
+                        "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
+                        "class" : clazzRes.Class.Name['_text'],
+                        "status" : pRes.Result.Status['_text']
+
+                    });
+                }
+                else
+                for (var pRes of clazzRes.PersonResult) {
+                    classifica.push({
+                        "name": pRes.Person.Name.Given['_text'],
+                        "surname": pRes.Person.Name.Family['_text'],
+                        "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
+                        "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
+                        "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
+                        "class" : clazzRes.Class.Name['_text'],
+                        "status" : pRes.Result.Status['_text']
+
+                    });
+                }
+            }
+
+            return sendRes(200, JSON.stringify(classifica));
+            
+        }
+        else {
+>>>>>>> giorgio-hash
             return sendRes(404, "Invalid Request");
         }
     } else {
@@ -73,7 +170,11 @@ exports.handler = async (event, context, callback) => {
 function getXml(id) {
 
     var params = {
+<<<<<<< HEAD
         Bucket: 'xmlres-1',
+=======
+        Bucket: 'secchiellobello',
+>>>>>>> giorgio-hash
         Key: 'results-' + id + '.xml'
     };
 
