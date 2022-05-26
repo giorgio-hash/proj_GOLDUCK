@@ -29,13 +29,6 @@ exports.handler = async (event, context, callback) => {
                 if (elem.PersonResult != null) {
                     if (Array.isArray(elem.PersonResult)) {
                         for (var pRes of elem.PersonResult) {
-                            if (pRes.Organisation != null && pRes.Organisation.Name['_text'] == org)
-                                clubs.push(pRes.Person.Name.Family['_text'] + ' ' + pRes.Person.Name.Given['_text']);
-                        }
-
-                    } else {
-                        if (elem.PersonResult.Organisation != null && elem.PersonResult.Organisation.Name['_text'] == org)
-                            clubs.push(elem.PersonResult.Person.Name.Family['_text'] + ' ' + elem.PersonResult.Person.Name.Given['_text']);
                             if (pRes.Organisation != null && pRes.Organisation.Name['_text'] == org){
                                 clubs.push({
                                     "name": pRes.Person.Name.Given['_text'],
@@ -68,9 +61,21 @@ exports.handler = async (event, context, callback) => {
                     }
                 }
             });
+            
+            
+            
+            var rand = clubs.length>4? 2 : 1;
+            
+            for(var i=0; i<rand; i++){
+             
+                    var rand_pers = Math.floor(Math.random() * clubs.length);
+                    clubs[rand_pers]["time"] = ""+Math.floor(Math.random() *500);
+                
+            }
+            
+            
             return sendRes(200, JSON.stringify(clubs));
-
-        } else if (clazz != null) {
+            
         } else if (clazz != null && clazz != "*") {
             var classifica = new Array();
 
@@ -100,16 +105,27 @@ exports.handler = async (event, context, callback) => {
                         "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                         "class" : clazzRes.Class.Name['_text'],
-                        "status" : pRes.Result.Status['_text']
-					            	"numero" : pRes.Person.Id['_text']
+                        "status" : pRes.Result.Status['_text'],
+						"numero" : pRes.Person.Id['_text']
 
                     });
                 }
             }
+            
+            
+            var rand = classifica.length>4? 2 : 1;
+            
+            for(var i=0; i<rand; i++){
+             
+                    var rand_pers = Math.floor(Math.random() * classifica.length);
+                    classifica[rand_pers]["time"] = ""+Math.floor(Math.random() *500);
+                
+            }
+            
+            
 
             return sendRes(200, JSON.stringify(classifica));
 
-        } else {
         } else if(clazz == "*"){
             
             var classifica = new Array();
@@ -144,6 +160,18 @@ exports.handler = async (event, context, callback) => {
                     });
                 }
             }
+            
+            
+            var rand = classifica.length>4? 2 : 1;
+            
+            for(var i=0; i<rand; i++){
+             
+                    var rand_pers = Math.floor(Math.random() * classifica.length);
+                    classifica[rand_pers]["time"] = ""+Math.floor(Math.random() *500);
+                
+            }
+            
+            
 
             return sendRes(200, JSON.stringify(classifica));
             
@@ -188,5 +216,6 @@ const sendRes = (status, body) => {
         },
         body: body
     };
+    
     return response;
 };
