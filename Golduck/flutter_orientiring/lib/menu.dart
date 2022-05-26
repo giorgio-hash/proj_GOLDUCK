@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_orientiring/start_route.dart';
 
 import 'Punto3/components.dart';
 import 'Punto3/organizations.dart';
-import 'classes_route.dart';
 import 'classifiche_route.dart';
 
 class MenuRoute extends StatelessWidget {
@@ -18,7 +18,7 @@ class MenuRoute extends StatelessWidget {
       Container(
           margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
           child: Text("risultati gara: ${racename}\n", style: TextStyle(fontSize: 15.0))),
-      nextPageButton(ClassesRoute(raceid, "StartList"),"Griglia di partenza"),
+      nextPageButton(StartRoute(raceid),"Griglia di partenza"),
       nextPageButton(ClassificheRoute(raceid),"filtra per classe"),
       nextPageButton(OrganisationsRoute(raceid),"Organizzationi")
     ];
