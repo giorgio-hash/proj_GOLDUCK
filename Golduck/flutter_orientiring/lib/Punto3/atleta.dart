@@ -42,7 +42,7 @@ class atletaStart {
 
   String get risultati {
     DateTime date = DateTime.parse(time);
-    DateFormat format = DateFormat("HH:MM:ss");
+    DateFormat format = DateFormat("HH:mm:ss");
     return "\ntempo: ${time=="N/A"? time : format.format(date)}";
 
   }
