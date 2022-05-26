@@ -18,7 +18,7 @@ Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
     // then parse the JSON.
 
 
-    List<atleta> atleti = List<atleta>.from((jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>).map((e) => atleta(e["name"],e["surname"],e["org"],e["position"],e["time"],e["class"])));
+    List<atleta> atleti = List<atleta>.from((jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>).map((e) => atleta(e["name"],e["surname"],e["org"],e["position"],e["time"],e["class"],e["status"])));
     atleti.sort((a,b){
 
       int res;
@@ -151,7 +151,7 @@ _buildExpandableContent(List<atleta>? lista) {
 
   for (atleta a in lista!)
     columnContent.add(
-        AthleteTile(a)
+        AthleteTile(a, "club: "+ a.org)
     );
 
   return columnContent;

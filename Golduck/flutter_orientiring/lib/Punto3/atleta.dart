@@ -9,8 +9,9 @@ class atleta {
   final String position;
   final String time;
   final String classid;
+  final String status;
 
-  atleta(this.name,this.surname,this.org,this.position,this.time,this.classid);
+  atleta(this.name,this.surname,this.org,this.position,this.time,this.classid, this.status);
 
 
   @override
@@ -20,7 +21,7 @@ class atleta {
 
   String get risultati {
 
-    return "posizione: ${position}" + "\ntempo: ${time=="N/A"? time : (Duration(seconds: int.parse(time)))}";
+    return "posizione: ${position}" + "\ntempo: ${time=="N/A"? time : (Duration(seconds: int.parse(time)))}" + "\nstatus: ${status}";
 
   }
 

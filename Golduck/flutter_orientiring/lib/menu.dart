@@ -7,8 +7,9 @@ import 'classifiche_route.dart';
 
 class MenuRoute extends StatelessWidget {
   final String raceid;
+  final String racename;
 
-  const MenuRoute(this.raceid, {Key? key}) : super(key: key);
+  const MenuRoute(this.raceid,this.racename, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +17,9 @@ class MenuRoute extends StatelessWidget {
     List<Widget> objs = [
       Container(
           margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
-          child: Text("Griglia di partenza:\n", style: TextStyle(fontSize: 15.0))),
-      nextPageButton(ClassesRoute(raceid, "StartList"),"StartList"),
-      Container(
-          margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
-          child: Text("classi in gara:\n", style: TextStyle(fontSize: 15.0))),
-      nextPageButton(ClassificheRoute(raceid),"Results"),
-      Container(
-          margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
-          child: Text("organizzazioni in gara:\n", style: TextStyle(fontSize: 15.0))),
+          child: Text("risultati gara: ${racename}\n", style: TextStyle(fontSize: 15.0))),
+      nextPageButton(ClassesRoute(raceid, "StartList"),"Griglia di partenza"),
+      nextPageButton(ClassificheRoute(raceid),"filtra per classe"),
       nextPageButton(OrganisationsRoute(raceid),"Organizzationi")
     ];
 

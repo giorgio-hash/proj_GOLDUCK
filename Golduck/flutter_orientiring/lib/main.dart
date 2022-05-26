@@ -114,7 +114,7 @@ class _MyAppState extends State<MyApp> {
                           ),
                         )
                     ),
-                      ...classes.map((e) => nextPageButton(MenuRoute(e["race_id"]),e["race_date"]+"\n"+e["race_name"]))
+                      ...classes.map((e) => nextPageButton(MenuRoute(e["race_id"],e["race_name"]),e["race_date"]+"\n"+e["race_name"]))
                     ];
 
                     return ListView.builder(
