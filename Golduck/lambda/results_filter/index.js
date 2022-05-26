@@ -38,7 +38,7 @@ exports.handler = async (event, context, callback) => {
                                     "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                                     "class" : elem.Class.Name['_text'],
                                     "status" : pRes.Result.Status['_text'],
-									"id" : pRes.Person.Id['text_']
+									"numero" : pRes.Person.Id['_text']
                                 });
                             }
                         }
@@ -54,7 +54,7 @@ exports.handler = async (event, context, callback) => {
                                 "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                                 "class" : elem.Class.Name['_text'],
                                 "status" : pRes.Result.Status['_text'],
-								"id" : pRes.Person.Id['text_']
+								"numero" : pRes.Person.Id['_text']
 
                             });
                         }
@@ -78,7 +78,7 @@ exports.handler = async (event, context, callback) => {
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                         "class" : clazzRes.Class.Name['_text'],
                         "status" : pRes.Result.Status['_text'],
-						"id" : pRes.Person.Id['text_']
+						"numero" : pRes.Person.Id['_text']
 
                     });
                 }
@@ -92,7 +92,7 @@ exports.handler = async (event, context, callback) => {
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                         "class" : clazzRes.Class.Name['_text'],
                         "status" : pRes.Result.Status['_text'],
-						"id" : pRes.Person.Id['text_']
+						"numero" : pRes.Person.Id['_text']
 
                     });
                 }
@@ -115,7 +115,7 @@ exports.handler = async (event, context, callback) => {
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                         "class" : clazzRes.Class.Name['_text'],
                         "status" : pRes.Result.Status['_text'],
-						"id" : pRes.Person.Id['text_']
+                        "numero" : pRes.Person.Id['_text']
 
                     });
                 }
@@ -129,7 +129,7 @@ exports.handler = async (event, context, callback) => {
                         "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
                         "class" : clazzRes.Class.Name['_text'],
                         "status" : pRes.Result.Status['_text'],
-						"id" : pRes.Person.Id['text_']
+                        "numero" : pRes.Person.Id['_text']
 
                     });
                 }
