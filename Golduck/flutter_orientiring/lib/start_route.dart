@@ -3,10 +3,19 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:json_diff/json_diff.dart';
 
 import './globals.dart';
 import 'Punto3/atleta.dart';
 import 'Punto3/components.dart';
+
+
+Map<dynamic, dynamic> json1 = {};
+Map<dynamic, dynamic> json2 = {};
+List<String> differenze = [];
+bool online = false;
+
+
 
 Future<Map<String, List<atletaStart>>> fetchStart(String raceid) async {
   final response =
@@ -16,6 +25,56 @@ Future<Map<String, List<atletaStart>>> fetchStart(String raceid) async {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     //fetch _JsonMap
+
+
+
+    var fetched = (jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>);
+    if(!online){
+
+      online = true;
+
+      differenze.clear();
+      json2.clear();
+      for(var j in fetched){
+        json1[j["numero"]] =  j;
+      }
+
+      print("risultati: " + json1.toString());
+
+    }else{
+
+      for(var j in fetched){
+        json2[j["numero"]] = j;
+      }
+
+      differenze.clear();
+
+      for(Object key in json2.keys){
+
+        if(json1.keys.contains(key) ){
+          DiffNode diff = (JsonDiffer.fromJson(json2[key], json1[key])).diff();
+          if(diff.changed.keys.length > 0)
+            differenze.add(key.toString());
+        }
+        else
+          differenze.add(key.toString());
+
+      }
+
+      json1 = Map<dynamic, dynamic>.from(json2);
+
+      print("\n\ndifferenze: " + differenze.toString());
+
+    }
+
+
+
+
+
+
+
+
+
     List<atletaStart> atleti = List<atletaStart>.from((jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>).map((e) => atletaStart(e["name"],e["surname"],e["org"],e["time"],e["class"])));
     atleti.sort((a,b) => a.surname.compareTo(b.surname) == 0? a.name.compareTo(b.name) : a.surname.compareTo(b.surname) );
 
@@ -112,6 +171,9 @@ class _StartRouteState extends State<StartRoute> {
                     itemCount: objs.length,
                     itemBuilder: ((context, index) => objs[index]));
               } else if (snapshot.hasError) {
+
+                online = false;
+
                 return ListView.builder(
                     itemCount: 1,
                     itemBuilder: (context, index) =>

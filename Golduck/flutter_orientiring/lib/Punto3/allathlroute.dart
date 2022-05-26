@@ -6,10 +6,17 @@ import 'dart:ui';
 import 'package:azlistview/azlistview.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:json_diff/json_diff.dart';
 
 import '../globals.dart';
 import 'atleta.dart';
 import 'components.dart';
+
+
+Map<dynamic, dynamic> json1 = {};
+Map<dynamic, dynamic> json2 = {};
+List<String> differenze = [];
+bool online = false;
 
 
 Future<List<atleta>> fetchResults(String raceid, String org) async {
@@ -18,6 +25,46 @@ Future<List<atleta>> fetchResults(String raceid, String org) async {
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
+
+    var fetched = (jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>);
+    if(!online){
+
+      online = true;
+
+      differenze.clear();
+      json2.clear();
+      for(var j in fetched){
+        json1[j["numero"]] =  j;
+      }
+
+      print("risultati: " + json1.toString());
+    }
+    else{
+
+      for(var j in fetched){
+        json2[j["numero"]] = j;
+      }
+
+      differenze.clear();
+
+      for(Object key in json2.keys){
+
+        if(json1.keys.contains(key) ){
+          DiffNode diff = (JsonDiffer.fromJson(json2[key], json1[key])).diff();
+          if(diff.changed.keys.length > 0)
+            differenze.add(key.toString());
+        }
+        else
+          differenze.add(key.toString());
+
+      }
+
+      json1 = Map<dynamic, dynamic>.from(json2);
+
+      print("\n\ndifferenze: " + differenze.toString());
+
+    }
+
 
 
     List<atleta> atleti = List<atleta>.from((jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>).map((e) => atleta(e["name"],e["surname"],e["org"],e["position"],e["time"],e["class"],e["status"])));
@@ -74,8 +121,7 @@ class _allAthlRouteState extends State<allAthlRoute> {
       appBar: AppBar(
         title: Text("risultati: tutti gli atleti")
       ),
-      body:  Center(
-      child:RefreshIndicator(
+      body: RefreshIndicator(
         color: Colors.blueAccent,
         onRefresh: _refresh,
          child: FutureBuilder<List<atleta>>(
@@ -101,6 +147,9 @@ class _allAthlRouteState extends State<allAthlRoute> {
                    }
                );
              } else if (snapshot.hasError) {
+
+               online = false;
+
                return ListView.builder(
                    itemCount: 1,
                    itemBuilder: (context,index) => ConnFailTile("${snapshot.error}")
@@ -108,11 +157,11 @@ class _allAthlRouteState extends State<allAthlRoute> {
              }
 
              // By default, show a loading spinner.
-             return CircularProgressIndicator();
+             return Center(child: CircularProgressIndicator());
            },
          ),
         )
-    ));
+    );
   }
 }
 

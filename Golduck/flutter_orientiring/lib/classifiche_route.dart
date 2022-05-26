@@ -4,10 +4,19 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:json_diff/json_diff.dart';
 
 import 'Punto3/atleta.dart';
 import 'Punto3/components.dart';
 import 'globals.dart';
+
+
+Map<dynamic, dynamic> json1 = {};
+Map<dynamic, dynamic> json2 = {};
+List<String> differenze = [];
+bool online = false;
+
+
 
 Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
 
@@ -16,6 +25,47 @@ Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
+
+
+    var fetched = (jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>);
+    if(!online){
+
+      online = true;
+
+      differenze.clear();
+      json2.clear();
+      for(var j in fetched){
+        json1[j["numero"]] =  j;
+      }
+
+      print("risultati: " + json1.toString());
+
+    }else{
+
+      for(var j in fetched){
+        json2[j["numero"]] = j;
+      }
+
+      differenze.clear();
+
+      for(Object key in json2.keys){
+
+        if(json1.keys.contains(key) ){
+          DiffNode diff = (JsonDiffer.fromJson(json2[key], json1[key])).diff();
+          if(diff.changed.keys.length > 0)
+            differenze.add(key.toString());
+        }
+        else
+          differenze.add(key.toString());
+
+      }
+
+      json1 = Map<dynamic, dynamic>.from(json2);
+
+      print("\n\ndifferenze: " + differenze.toString());
+
+    }
+
 
 
     List<atleta> atleti = List<atleta>.from((jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>).map((e) => atleta(e["name"],e["surname"],e["org"],e["position"],e["time"],e["class"],e["status"])));
@@ -94,8 +144,7 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
         appBar: AppBar(
           title: const Text("risultati: filtra per classe "),
         ),
-        body: Center(
-          child:RefreshIndicator(
+        body: RefreshIndicator(
             color: Colors.blueAccent,
             onRefresh: _refresh,
             child: FutureBuilder<Map<String, List<atleta>>>(
@@ -130,6 +179,9 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
                   );
 
                 } else if (snapshot.hasError) {
+
+                  online = false;
+
                   return ListView.builder(
                       itemCount: 1,
                       itemBuilder: (context,index) => ConnFailTile("${snapshot.error}")
@@ -137,11 +189,11 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
                 }
 
                 // By default, show a loading spinner.
-                return const CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
               },
             ),
           ),
-        ));
+        );
   }
 }
 

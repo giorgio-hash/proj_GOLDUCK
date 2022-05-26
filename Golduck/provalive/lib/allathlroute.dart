@@ -6,11 +6,17 @@ import 'dart:ui';
 import 'package:azlistview/azlistview.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:json_diff/json_diff.dart';
 
 import 'atleta.dart';
 import 'components.dart';
 import 'globals.dart';
 
+
+Map<dynamic, dynamic> json1 = {};
+Map<dynamic, dynamic> json2 = {};
+List<String> differenze = [];
+bool online = false;
 
 
 Future<List<atleta>> fetchResults(String raceid, String org) async {
@@ -19,6 +25,47 @@ Future<List<atleta>> fetchResults(String raceid, String org) async {
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
+
+    var fetched = (jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>);
+    if(!online){
+
+      online = true;
+
+      differenze.clear();
+      json2.clear();
+      for(var j in fetched){
+        json1[j["numero"]] =  j;
+      }
+
+      print("risultati: " + json1.toString());
+
+    }else{
+
+      for(var j in fetched){
+        json2[j["numero"]] = j;
+      }
+
+      differenze.clear();
+
+      for(Object key in json2.keys){
+
+        if(json1.keys.contains(key) ){
+          DiffNode diff = (JsonDiffer.fromJson(json2[key], json1[key])).diff();
+          if(diff.changed.keys.length > 0)
+            differenze.add(key.toString());
+        }
+        else
+          differenze.add(key.toString());
+
+      }
+
+      json1 = Map<dynamic, dynamic>.from(json2);
+
+      print("\n\ndifferenze: " + differenze.toString());
+
+    }
+
+
 
     List<atleta> atleti = List<atleta>.from((jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>).map((e) => atleta(e["name"],e["surname"],e["org"],e["position"],e["time"],e["class"])));
     atleti.sort((a,b) => a.surname.compareTo(b.surname) == 0? a.name.compareTo(b.name) : a.surname.compareTo(b.surname) );
@@ -44,6 +91,7 @@ class allAthlRoute extends StatefulWidget {
 class _allAthlRouteState extends State<allAthlRoute> {
 
   late Future<List<atleta>> futureRes;
+  late Timer timer;
 
   Future<void> _refresh(){
 
@@ -60,6 +108,16 @@ class _allAthlRouteState extends State<allAthlRoute> {
   void initState() {
     super.initState();
     futureRes = fetchResults(widget.raceid, widget.org);
+
+    if(mounted) {
+      timer = Timer.periodic(Duration(seconds: 30), (timer) {
+        print("\n\nazione!\n\n");
+        if(online)
+          _refresh();
+      });
+    }
+
+
   }
 
   List<AZItem> initList(List<atleta>  atl){
@@ -68,9 +126,25 @@ class _allAthlRouteState extends State<allAthlRoute> {
 
 
   @override
+  void dispose(){
+    super.dispose();
+    timer.cancel();
+  }
+
+  @override
+  void deactivate(){
+    super.deactivate();
+    timer.cancel();
+  }
+
+
+
+  @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: ()async{differenze.clear();timer.cancel();print("torna alla page precedente");return true;},
+    child: Scaffold(
       appBar: AppBar(
         title: Text("risultati: tutti gli atleti")
       ),
@@ -112,7 +186,7 @@ class _allAthlRouteState extends State<allAthlRoute> {
            },
          ),
         )
-    ));
+    )));
   }
 }
 

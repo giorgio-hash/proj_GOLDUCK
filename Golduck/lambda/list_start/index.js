@@ -26,7 +26,7 @@ exports.handler = async (event) => {
       }));
       break;
     } catch (err) {
-      results = await s3download(event);
+      results = await s3download(id);
     }
 
   }
@@ -44,7 +44,8 @@ exports.handler = async (event) => {
           'surname': classStart.PersonStart.Person.Name.Given['_text'],
           'org': classStart.PersonStart.Organisation.Name['_text'],
           'time': classStart.PersonStart.Start.StartTime['_text'] != null ? classStart.PersonStart.Start.StartTime['_text'] : '00.00.00',
-          'class': classStart.Class.Name['_text']
+          'class': classStart.Class.Name['_text'],
+          "numero" : classStart.PersonStart.Person.Id['_text']
       });
     } else {
       for(var personStart of classStart.PersonStart) {
@@ -53,7 +54,8 @@ exports.handler = async (event) => {
           'surname': personStart.Person.Name.Given['_text'],
           'org': personStart.Organisation.Name['_text'],
           'time': personStart.Start.StartTime['_text'] != null ? personStart.Start.StartTime['_text'] : '00.00.00',
-          'class': classStart.Class.Name['_text']
+          'class': classStart.Class.Name['_text'],
+          "numero" : personStart.Person.Id['_text']
       });
      }
     }
@@ -72,7 +74,8 @@ exports.handler = async (event) => {
         'surname': personStart.Person.Name.Given['_text'],
         'org': personStart.Organisation.Name['_text'],
         'time': personStart.Start.StartTime['_text'] != null ? personStart.Start.StartTime['_text'] : '00.00.00',
-        'class': classStart.Class.Name['_text']
+        'class': classStart.Class.Name['_text'],
+        "numero" : personStart.Person.Id['_text']
     });
     
 
@@ -100,7 +103,7 @@ const sendRes = (status, body) => {
 
 async function s3download(id) {
   var params = {
-    Bucket: 'xmlres',
+    Bucket: 'secchiellobello',
     Key: 'start-' + id + '.xml'
   };
 
