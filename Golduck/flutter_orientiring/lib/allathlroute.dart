@@ -31,14 +31,11 @@ Future<List<atleta>> fetchResults(String raceid, String org) async {
       differenze.clear();
       json2.clear();
       for (var j in fetched) {
-        json1[j["name"]+j["surname"]] = j;
-
+        json1[j["name"] + j["surname"]] = j;
       }
     } else {
-
       for (var j in fetched) {
-        json2[j["name"]+j["surname"]] = j;
-
+        json2[j["name"] + j["surname"]] = j;
       }
 
       differenze.clear();
@@ -109,57 +106,75 @@ class _allAthlRouteState extends State<allAthlRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            title: const Text("risultati: tutti gli atleti"),
-            actions: <Widget>[
-              IconButton(
-                  icon: const Icon(Icons.refresh),
-                  tooltip: 'Refresh',
-                  onPressed: () {
-                    _refresh();
-                  })
-            ]),
-        body: RefreshIndicator(
-          color: Colors.blueAccent,
-          onRefresh: _refresh,
-          child: FutureBuilder<List<atleta>>(
-            future: futureRes,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                List<atleta> atl = snapshot.data!;
-                List<AZItem> items = initList(atl);
-                //aggiungi header
-                items.insert(0, AZItem("header", "_"));
+      appBar: AppBar(
+          title: const Text("risultati: tutti gli atleti"),
+          actions: <Widget>[
+            IconButton(
+                icon: const Icon(Icons.refresh),
+                tooltip: 'Refresh',
+                onPressed: () {
+                  _refresh();
+                })
+          ]),
+      body: RefreshIndicator(
+        color: Colors.blueAccent,
+        onRefresh: _refresh,
+        child: FutureBuilder<List<atleta>>(
+          future: futureRes,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List<atleta> atl = snapshot.data!;
+              List<AZItem> items = initList(atl);
+              //aggiungi header
+              items.insert(0, AZItem("header", "_"));
 
-                DateTime lastRefresh = DateTime.now().toLocal();
+              DateTime lastRefresh = DateTime.now().toLocal();
 
-                return AzListView(
-                    data: items,
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      return index == 0
-                          ? Container(
-                              margin: const EdgeInsets.fromLTRB(16, 10, 16, 25),
-                              child: Text(
-                                  "ultimo aggiornamento: \n ${lastRefresh.toString()}",
-                                  style: const TextStyle(fontSize: 15.0)))
-                          : (differenze.contains(atl[index - 1].name+atl[index - 1].surname)?
-                      Container(color: Colors.red.shade100, child: AthleteTile(atl[index - 1],"classe: ${atl[index - 1].classid}"))
-                          : AthleteTile(atl[index - 1], "classe: ${atl[index - 1].classid}"));
-                    });
-              } else if (snapshot.hasError) {
-                online = false;
+              return AzListView(
+                  data: items,
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return index == 0
+                        ? Container(
+                            margin: const EdgeInsets.fromLTRB(16, 10, 16, 25),
+                            child: Text(
+                                "ultimo aggiornamento: \n ${lastRefresh.toString()}",
+                                style: const TextStyle(fontSize: 15.0)))
+                        : (differenze.contains(
+                                atl[index - 1].name + atl[index - 1].surname)
+                            ? Container(
+                                color: Colors.red.shade100,
+                                child: AthleteTile(atl[index - 1],
+                                    "classe: ${atl[index - 1].classid}"))
+                            : AthleteTile(atl[index - 1],
+                                "classe: ${atl[index - 1].classid}"));
+                  });
+            } else if (snapshot.hasError) {
+              online = false;
 
-                return ListView.builder(
-                    itemCount: 1,
-                    itemBuilder: (context, index) =>
-                        ConnFailTile("${snapshot.error}"));
-              }
+              return ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (context, index) =>
+                      ConnFailTile("${snapshot.error}"));
+            }
 
-              // By default, show a loading spinner.
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
-        ));
+            // By default, show a loading spinner.
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        hoverColor: Color.fromARGB(121, 133, 133, 133),
+        hoverElevation: 50,
+        tooltip: 'Return to Home',
+        elevation: 12,
+        onPressed: () {
+          Navigator.pop(context); //return
+          Navigator.pop(context); //return
+          Navigator.pop(context); //return
+        },
+        child: const Icon(Icons.home),
+      ),
+    );
   }
 }
