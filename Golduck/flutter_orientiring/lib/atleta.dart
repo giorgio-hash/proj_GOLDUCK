@@ -47,7 +47,6 @@ class AthleteTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
         margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
         decoration: const BoxDecoration(

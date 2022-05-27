@@ -17,7 +17,7 @@ class MenuRoute extends StatelessWidget {
     List<Widget> objs = [
       Container(
           margin: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-          child: Text("risultati gara: ${racename}\n",
+          child: Text("risultati gara: $racename\n",
               style: const TextStyle(fontSize: 15.0))),
       nextPageButton(StartRoute(raceid), "Griglia di partenza"),
       nextPageButton(ClassificheRoute(raceid), "filtra per classe"),
@@ -32,7 +32,7 @@ class MenuRoute extends StatelessWidget {
         body: ListView.builder(
             itemCount: objs.length, itemBuilder: (c, i) => objs[i]),
         floatingActionButton: FloatingActionButton(
-          hoverColor: Color.fromARGB(121, 133, 133, 133),
+          hoverColor: const Color.fromARGB(121, 133, 133, 133),
           hoverElevation: 50,
           tooltip: 'Return to Home',
           elevation: 12,
