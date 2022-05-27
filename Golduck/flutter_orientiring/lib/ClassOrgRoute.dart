@@ -17,7 +17,7 @@ bool online = false;
 Future<Map<String, List<atleta>>> fetchClasses(
     String raceid, String org) async {
   final response = await http
-      .get(Uri.parse('$apiUrl/results_filter?id=$raceid&organisation=$org'));
+      .get(Uri.parse('$apiUrl/test?id=$raceid&organisation=$org'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -147,7 +147,7 @@ class _ClassOrgRouteState extends State<ClassOrgRoute> {
                 Container(
                     margin: const EdgeInsets.fromLTRB(16, 10, 16, 25),
                     child: Text(
-                        "ultimo aggiornamento:\n ${lastRefresh.toString()}",
+                        "ultimo aggiornamento:\n ${lastRefresh.toString()} \n\n risultati per ${widget.org}",
                         style: const TextStyle(fontSize: 15.0))),
                 ...classiDiAtleti.keys.map((classid) => ExpansionTile(
                       title: Text(

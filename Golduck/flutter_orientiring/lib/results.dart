@@ -22,6 +22,11 @@ class _ResultsRouteState extends State<ResultsRoute> {
   @override
   Widget build(BuildContext context) {
     List<Widget> buttons = [
+      Container(
+        margin: const EdgeInsets.fromLTRB(16, 10, 16, 25),
+        child: Text(
+            "organizzazione: ${widget.org}",
+            style: const TextStyle(fontSize: 15.0))),
       nextPageButton(
           allAthlRoute(widget.raceid, widget.org), "tutti gli atleti"),
       nextPageButton(
