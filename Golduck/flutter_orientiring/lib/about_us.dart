@@ -1,11 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-
-import './globals.dart';
 
 class about_us extends StatefulWidget {
   const about_us({Key? key}) : super(key: key);
@@ -32,22 +25,22 @@ class about_us_state extends State<about_us> {
             'https://portalebambini.it/wp-content/uploads/2015/10/orienteering1.jpg',
             fit: BoxFit.fitWidth,
           ),
-          Text('ORIENTEERING',
-              style: TextStyle(height: 2, fontSize: 30),
+          const Text('ORIENTEERING',
+              style: const TextStyle(height: 2, fontSize: 30),
               textAlign: TextAlign.center),
-          Text(
+          const Text(
             'Stefano Gechele',
             textAlign: TextAlign.center,
           ),
-          Text('Giorgio Chirico', textAlign: TextAlign.center),
-          Text('Davide Revrena', textAlign: TextAlign.center),
-          Text('Fabio Assolari', textAlign: TextAlign.center),
+          const Text('Giorgio Chirico', textAlign: TextAlign.center),
+          const Text('Davide Revrena', textAlign: TextAlign.center),
+          const Text('Fabio Assolari', textAlign: TextAlign.center),
         ],
       ),
 
       // floating botttom 'home'
       floatingActionButton: FloatingActionButton(
-        hoverColor: Color.fromARGB(121, 133, 133, 133),
+        hoverColor: const Color.fromARGB(121, 133, 133, 133),
         hoverElevation: 50,
         tooltip: 'Return to Home',
         elevation: 12,
