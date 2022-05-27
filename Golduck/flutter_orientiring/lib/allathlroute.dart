@@ -172,6 +172,7 @@ class _allAthlRouteState extends State<allAthlRoute> {
           Navigator.pop(context); //return
           Navigator.pop(context); //return
           Navigator.pop(context); //return
+          Navigator.pop(context); //return
         },
         child: const Icon(Icons.home),
       ),
