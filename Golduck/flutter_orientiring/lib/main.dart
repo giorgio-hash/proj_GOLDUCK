@@ -133,7 +133,7 @@ class _MyAppState extends State<MyApp> {
 
                 return ListView.builder(
                     itemCount: items.length,
-                    itemBuilder: ((context, index) => items[index] as Widget));
+                    itemBuilder: ((context, index) => items[index]));
               } else if (snapshot.hasError) {
                 return ListView.builder(
                     itemCount: 1,

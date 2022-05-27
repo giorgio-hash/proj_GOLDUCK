@@ -65,16 +65,16 @@ Future<Map<String, List<atletaStart>>> fetchStart(String raceid) async {
     List<String> classi = atleti.map((e) => e.clazz).toSet().toList();
     classi.sort((a, b) => a.compareTo(b));
 
-    Map<String, List<atletaStart>> atleti_per_classe = {};
+    Map<String, List<atletaStart>> atletiPerClasse = {};
 
     for (String classe in classi) {
-      atleti_per_classe[classe] = [];
+      atletiPerClasse[classe] = [];
       for (atletaStart a in atleti) {
-        if (a.clazz == classe) atleti_per_classe[classe]!.add(a);
+        if (a.clazz == classe) atletiPerClasse[classe]!.add(a);
       }
     }
 
-    return atleti_per_classe;
+    return atletiPerClasse;
   } else {
     // then throw an exception.
     throw Exception('Start list not found');
@@ -171,7 +171,7 @@ class _StartRouteState extends State<StartRoute> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        hoverColor: Color.fromARGB(121, 133, 133, 133),
+        hoverColor: const Color.fromARGB(121, 133, 133, 133),
         hoverElevation: 50,
         tooltip: 'Return to Home',
         elevation: 12,
@@ -274,5 +274,4 @@ class NavigationDrawer extends StatelessWidget {
           ],
         ),
       );
-
 }
