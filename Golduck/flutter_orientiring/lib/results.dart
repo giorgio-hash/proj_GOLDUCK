@@ -29,13 +29,26 @@ class _ResultsRouteState extends State<ResultsRoute> {
     ];
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("risultati "),
-        ),
-        body: ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: buttons.length,
-            itemBuilder: ((context, index) => buttons[index])));
+      appBar: AppBar(
+        title: const Text("risultati "),
+      ),
+      body: ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: buttons.length,
+          itemBuilder: ((context, index) => buttons[index])),
+      floatingActionButton: FloatingActionButton(
+        hoverColor: Color.fromARGB(121, 133, 133, 133),
+        hoverElevation: 50,
+        tooltip: 'Return to Home',
+        elevation: 12,
+        onPressed: () {
+          Navigator.pop(context); //return
+          Navigator.pop(context); //return
+          Navigator.pop(context); //return
+        },
+        child: const Icon(Icons.home),
+      ),
+    );
   }
 }
