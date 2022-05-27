@@ -189,8 +189,8 @@ class _StartRouteState extends State<StartRoute> {
 
     for (atletaStart a in lista!) {
       columnContent.add(differenze.contains(a.name + a.surname)
-          ? Container(color: Colors.red.shade100, child: StartTile(a))
-          : StartTile(a));
+          ? Container(color: Colors.red.shade100, child: StartTile(a,"\nclub: ${a.org}"))
+          : StartTile(a,"\nclub: ${a.org}"));
     }
 
     return columnContent;

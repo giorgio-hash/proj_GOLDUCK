@@ -147,7 +147,7 @@ class _ClassOrgRouteState extends State<ClassOrgRoute> {
                 Container(
                     margin: const EdgeInsets.fromLTRB(16, 10, 16, 25),
                     child: Text(
-                        "ultimo aggiornamento:\n ${lastRefresh.toString()}",
+                        "ultimo aggiornamento:\n ${lastRefresh.toString()}\n\n risultati per ${widget.org}",
                         style: const TextStyle(fontSize: 15.0))),
                 ...classiDiAtleti.keys.map((classid) => ExpansionTile(
                       title: Text(
