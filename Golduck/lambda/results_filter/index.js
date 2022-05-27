@@ -62,8 +62,10 @@ exports.handler = async (event, context, callback) => {
             var classifica = new Array();
 
             for (var clazzRes of xml.ResultList.ClassResult) {
-                if (clazzRes.Class.Name['_text'] != clazz)
-                    continue;
+                if (clazz != '*') {
+                    if (clazzRes.Class.Name['_text'] != clazz)
+                        continue;
+                }
                 if (clazzRes.PersonResult == null)
                     continue;
                 if (Array.isArray(clazzRes.PersonResult)) {
