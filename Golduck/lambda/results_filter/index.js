@@ -51,7 +51,6 @@ exports.handler = async (event, context, callback) => {
                             if(pRes.Person.Id['_text'] == null)
                                     console.log("\n\ncognome: "+ pRes.Person.Name.Family['_text']);
                          
-
                             clubs.push({
                                 "id": elem.PersonResult.Person.Id['_text'],
                                 "name": elem.PersonResult.Person.Name.Given['_text'],
@@ -64,7 +63,6 @@ exports.handler = async (event, context, callback) => {
                             });   
                             
                         }
-
                     }
                 }
             });
@@ -88,7 +86,6 @@ exports.handler = async (event, context, callback) => {
                                     console.log("\n\ncognome: "+ pRes.Person.Name.Family['_text']);
                          
                         
-
                         classifica.push({
                             "id": pRes.Person.Id['_text'],
                             "name": pRes.Person.Name.Given['_text'],

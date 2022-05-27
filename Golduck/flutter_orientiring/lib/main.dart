@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -65,7 +64,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text('Available races'), actions: <Widget>[
-
           IconButton(
               icon: const Icon(Icons.refresh),
               tooltip: 'Refresh',
@@ -207,5 +205,4 @@ class NavigationDrawer extends StatelessWidget {
       ],
     ),
   );
-
 }
