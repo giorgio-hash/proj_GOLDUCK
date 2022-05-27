@@ -26,20 +26,15 @@ Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
     if (!online) {
       online = true;
 
-      int cont = 0;
-
       differenze.clear();
       json2.clear();
       for (var j in fetched) {
-        json1[cont] = j;
-        cont++;
+        json1[j["name"]+j["surname"]] = j;
       }
     } else {
-      int cont = 0;
 
       for (var j in fetched) {
-        json2[cont] = j;
-        cont++;
+        json2[j["name"]+j["surname"]] = j;
       }
 
       differenze.clear();
@@ -56,11 +51,14 @@ Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
       json1 = Map<dynamic, dynamic>.from(json2);
     }
 
+
     List<atleta> atleti = List<atleta>.from(
         (jsonDecode(const Utf8Decoder().convert(response.bodyBytes))
                 as List<dynamic>)
-            .map((e) => atleta(e["name"], e["surname"], e["org"], e["position"],
-                e["time"], e["class"], e["status"])));
+            .map((e) => (){
+          return atleta(e["name"], e["surname"], e["org"], e["position"],
+              e["time"], e["class"], e["status"] );
+        }));
     atleti.sort((a, b) {
       int res;
 
@@ -192,8 +190,12 @@ _buildExpandableContent(List<atleta>? lista) {
   List<Widget> columnContent = [];
 
   for (atleta a in lista!) {
-    columnContent.add(AthleteTile(a, "club: ${a.org}"));
+    columnContent.add(
+    differenze.contains(a.name+a.surname)? Container(color: Colors.red.shade100,child: AthleteTile(a)) : AthleteTile(a)
+    );
   }
 
   return columnContent;
 }
+
+

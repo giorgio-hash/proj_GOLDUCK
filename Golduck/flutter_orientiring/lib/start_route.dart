@@ -28,20 +28,18 @@ Future<Map<String, List<atletaStart>>> fetchStart(String raceid) async {
     if (!online) {
       online = true;
 
-      int cont = 0;
+
 
       differenze.clear();
       json2.clear();
       for (var j in fetched) {
-        json1[cont] = j;
-        cont++;
+        json1[j["name"]+j["surname"]] = j;
+
       }
     } else {
-      int cont = 0;
 
       for (var j in fetched) {
-        json2[cont] = j;
-        cont++;
+        json2[j["name"]+j["surname"]] = j;
       }
 
       differenze.clear();
@@ -180,7 +178,9 @@ class _StartRouteState extends State<StartRoute> {
     List<Widget> columnContent = [];
 
     for (atletaStart a in lista!) {
-      columnContent.add(StartTile(a));
+      columnContent.add(
+          differenze.contains(a.name+a.surname)? Container(color: Colors.red.shade100,child: StartTile(a)) : StartTile(a)
+      );
     }
 
     return columnContent;

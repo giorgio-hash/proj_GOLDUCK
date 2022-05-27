@@ -28,20 +28,17 @@ Future<List<atleta>> fetchResults(String raceid, String org) async {
     if (!online) {
       online = true;
 
-      int cont = 0;
-
       differenze.clear();
       json2.clear();
       for (var j in fetched) {
-        json1[cont] = j;
-        cont++;
+        json1[j["name"]+j["surname"]] = j;
+
       }
     } else {
-      int cont = 0;
 
       for (var j in fetched) {
-        json2[cont] = j;
-        cont++;
+        json2[j["name"]+j["surname"]] = j;
+
       }
 
       differenze.clear();
@@ -146,8 +143,9 @@ class _allAthlRouteState extends State<allAthlRoute> {
                               child: Text(
                                   "ultimo aggiornamento: \n ${lastRefresh.toString()}",
                                   style: const TextStyle(fontSize: 15.0)))
-                          : AthleteTile(atl[index - 1],
-                              "classe: ${atl[index - 1].classid}");
+                          : (differenze.contains(atl[index - 1].name+atl[index - 1].surname)?
+                      Container(color: Colors.red.shade100, child: AthleteTile(atl[index - 1],"classe: ${atl[index - 1].classid}"))
+                          : AthleteTile(atl[index - 1], "classe: ${atl[index - 1].classid}"));
                     });
               } else if (snapshot.hasError) {
                 online = false;
