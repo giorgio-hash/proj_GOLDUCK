@@ -194,6 +194,7 @@ class _ClassOrgRouteState extends State<ClassOrgRoute> {
           Navigator.pop(context); //return
           Navigator.pop(context); //return
           Navigator.pop(context); //return
+          Navigator.pop(context); //return
         },
         child: const Icon(Icons.home),
       ),
