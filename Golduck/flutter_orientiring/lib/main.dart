@@ -1,17 +1,14 @@
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-import 'Punto3/components.dart';
+import 'components.dart';
 import 'globals.dart';
 import 'menu.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<Map<String, dynamic>>> fetchRaces() async {
-
-  final response = await http.get(
-      Uri.parse('$apiUrl/list_races'));
+  final response = await http.get(Uri.parse('$apiUrl/list_races'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -26,9 +23,9 @@ Future<List<Map<String, dynamic>>> fetchRaces() async {
 
 void main() {
   runApp(const MaterialApp(
-    title: 'Ori Live Results',
-    home: MyApp(),
-  ));
+      title: 'Ori Live Results',
+      home: MyApp(),
+      debugShowCheckedModeBanner: false));
 }
 
 class MyApp extends StatefulWidget {
@@ -40,8 +37,11 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late Future<List<Map<String, dynamic>>> futureRaces;
-  Map<String,Icon> icone = { "ordina per nome" : Icon(Icons.sort_by_alpha_outlined), "ordina per data" : Icon(Icons.watch_later_outlined) };
-  List<String> scelte = ["ordina per data","ordina per nome"];
+  Map<String, Icon> icone = {
+    "ordina per nome": const Icon(Icons.sort_by_alpha_outlined),
+    "ordina per data": const Icon(Icons.watch_later_outlined)
+  };
+  List<String> scelte = ["ordina per data", "ordina per nome"];
   String? _scelta;
 
   @override
@@ -51,97 +51,96 @@ class _MyAppState extends State<MyApp> {
     _scelta = scelte[0];
   }
 
-  Future<void> _refresh(){
-
-    setState((){
-
+  Future<void> _refresh() {
+    setState(() {
       futureRaces = fetchRaces();
-
     });
 
     return futureRaces;
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Available races'),actions: <Widget>[
+        appBar: AppBar(title: const Text('Available races'), actions: <Widget>[
           IconButton(
               icon: const Icon(Icons.refresh),
               tooltip: 'Refresh',
               onPressed: () {
                 _refresh();
               }),
-        ]
-    ),
+        ]),
         body: Center(
-            child:RefreshIndicator(
-              color: Colors.blueAccent,
-              onRefresh: _refresh,
-              child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: futureRaces,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var classes = snapshot.data!; // il ! è imperativo: specifico a Dart che questa variabile non può essere null
+            child: RefreshIndicator(
+          color: Colors.blueAccent,
+          onRefresh: _refresh,
+          child: FutureBuilder<List<Map<String, dynamic>>>(
+            future: futureRaces,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var classes = snapshot
+                    .data!; // il ! è imperativo: specifico a Dart che questa variabile non può essere null
 
-                    var items = [
-                    Container(
+                var items = [
+                  Container(
                       height: 60.0,
                       child: ButtonTheme(
-                          alignedDropdown: true,
-                          child: DropdownButton(
+                        alignedDropdown: true,
+                        child: DropdownButton(
                             value: _scelta,
-                              onChanged: (e){
+                            onChanged: (e) {
+                              setState(() {
+                                _scelta = e.toString();
+                                _scelta == scelte[0]
+                                    ? classes.sort((a, b) {
+                                        var data1 = b["race_date"].split(".");
+                                        var data2 = a["race_date"].split(".");
 
-                                setState((){
-                                  _scelta = e.toString();
-                                  _scelta == scelte[0]?
-                                  classes.sort((a,b){
-                                    var data1 = b["race_date"].split(".");
-                                    var data2 = a["race_date"].split(".");
+                                        return DateTime(
+                                                int.parse(data1[2]),
+                                                int.parse(data1[1]),
+                                                int.parse(data1[0]))
+                                            .compareTo(DateTime(
+                                                int.parse(data2[2]),
+                                                int.parse(data2[1]),
+                                                int.parse(data2[0])));
+                                      })
+                                    : classes.sort((a, b) => a["race_name"]
+                                        .compareTo(b["race_name"]));
+                              });
+                            },
+                            isExpanded: true,
+                            items: (scelte.map((e) => DropdownMenuItem(
+                                value: e,
+                                child: Container(
+                                    decoration: const BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                width: 3,
+                                                color: Colors.black26))),
+                                    child: ListTile(
+                                        leading: icone[e],
+                                        title: Text(e)))))).toList()),
+                      )),
+                  ...classes.map((e) => nextPageButton(
+                      MenuRoute(e["race_id"], e["race_name"]),
+                      e["race_date"] + "\n" + e["race_name"]))
+                ];
 
-                                    return DateTime(int.parse(data1[2]),int.parse(data1[1]),int.parse(data1[0])).compareTo(DateTime(int.parse(data2[2]),int.parse(data2[1]),int.parse(data2[0])));
-                                  } )
-                                      :
-                                  classes.sort((a,b) => a["race_name"].compareTo(b["race_name"])) ;});
+                return ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: ((context, index) => items[index] as Widget));
+              } else if (snapshot.hasError) {
+                return ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (context, index) =>
+                        ConnFailTile("${snapshot.error}"));
+              }
 
-                              },
-                              isExpanded: true,
-                              items: (scelte.map((e) => DropdownMenuItem(value: e , child: Container(decoration: BoxDecoration( border: Border( bottom: BorderSide(width: 3,color: Colors.black26) )),child: ListTile(leading:icone[e],title:Text(e)))  ))).toList()
-                          ),
-                        )
-                    ),
-                      ...classes.map((e) => nextPageButton(MenuRoute(e["race_id"],e["race_name"]),e["race_date"]+"\n"+e["race_name"]))
-                    ];
-
-                    return ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: ((context, index) => items[index] as Widget )
-                    );
-                  } else if (snapshot.hasError) {
-                    return ListView.builder(
-                        itemCount: 1,
-                        itemBuilder: (context,index) => ConnFailTile("${snapshot.error}")
-                    );
-                  }
-
-
-
-                  // By default, show a loading spinner.
-                  return const CircularProgressIndicator();
-                },
-              ),
-            )
-        )
-    );
+              // By default, show a loading spinner.
+              return const CircularProgressIndicator();
+            },
+          ),
+        )));
   }
 }
-
-
-
-
-
-

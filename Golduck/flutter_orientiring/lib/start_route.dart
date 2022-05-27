@@ -6,103 +6,81 @@ import 'package:http/http.dart' as http;
 import 'package:json_diff/json_diff.dart';
 
 import './globals.dart';
-import 'Punto3/atleta.dart';
-import 'Punto3/components.dart';
-
+import 'atleta.dart';
+import 'components.dart';
 
 Map<dynamic, dynamic> json1 = {};
 Map<dynamic, dynamic> json2 = {};
 List<String> differenze = [];
 bool online = false;
 
-
-
 Future<Map<String, List<atletaStart>>> fetchStart(String raceid) async {
   final response =
-  await http.get(Uri.parse('$apiUrl/list_start?id=$raceid&class=*'));
+      await http.get(Uri.parse('$apiUrl/list_start?id=$raceid&class=*'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     //fetch _JsonMap
 
-
-
-    var fetched = (jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>);
-    if(!online){
-
+    var fetched = (jsonDecode(const Utf8Decoder().convert(response.bodyBytes))
+        as List<dynamic>);
+    if (!online) {
       online = true;
 
       int cont = 0;
 
       differenze.clear();
       json2.clear();
-      for(var j in fetched){
-        json1[cont] =  j;
+      for (var j in fetched) {
+        json1[cont] = j;
         cont++;
       }
-
-      print("risultati: " + json1.toString());
-
-    }else{
-
+    } else {
       int cont = 0;
 
-      for(var j in fetched){
+      for (var j in fetched) {
         json2[cont] = j;
         cont++;
       }
 
       differenze.clear();
 
-      for(Object key in json2.keys){
-
-        if(json1.keys.contains(key) ){
+      for (Object key in json2.keys) {
+        if (json1.keys.contains(key)) {
           DiffNode diff = (JsonDiffer.fromJson(json2[key], json1[key])).diff();
-          if(diff.changed.keys.length > 0)
-            differenze.add(key.toString());
-        }
-        else
+          if (diff.changed.keys.isNotEmpty) differenze.add(key.toString());
+        } else {
           differenze.add(key.toString());
-
+        }
       }
 
       json1 = Map<dynamic, dynamic>.from(json2);
-
-      print("\n\ndifferenze: " + differenze.toString());
-
     }
 
-
-
-
-
-
-
-
-
-    List<atletaStart> atleti = List<atletaStart>.from((jsonDecode(Utf8Decoder().convert(response.bodyBytes)) as List<dynamic>).map((e) => atletaStart(e["name"],e["surname"],e["org"],e["time"],e["class"])));
-    atleti.sort((a,b) => a.surname.compareTo(b.surname) == 0? a.name.compareTo(b.name) : a.surname.compareTo(b.surname) );
+    List<atletaStart> atleti = List<atletaStart>.from(
+        (jsonDecode(const Utf8Decoder().convert(response.bodyBytes))
+                as List<dynamic>)
+            .map((e) => atletaStart(
+                e["name"], e["surname"], e["org"], e["time"], e["class"])));
+    atleti.sort((a, b) => a.surname.compareTo(b.surname) == 0
+        ? a.name.compareTo(b.name)
+        : a.surname.compareTo(b.surname));
 
     List<String> classi = atleti.map((e) => e.clazz).toSet().toList();
-    classi.sort((a,b) => a.compareTo(b));
-
+    classi.sort((a, b) => a.compareTo(b));
 
     Map<String, List<atletaStart>> atleti_per_classe = {};
 
-    for(String classe in classi ){
+    for (String classe in classi) {
       atleti_per_classe[classe] = [];
-      for(atletaStart a in atleti){
-        if(a.clazz == classe)
-          atleti_per_classe[classe]!.add(a);
+      for (atletaStart a in atleti) {
+        if (a.clazz == classe) atleti_per_classe[classe]!.add(a);
       }
     }
 
     return atleti_per_classe;
-
-
   } else {
-    // If the server did not return a 200 OK response,
     // then throw an exception.
     throw Exception('Start list not found');
   }
@@ -121,11 +99,8 @@ class _StartRouteState extends State<StartRoute> {
   late Future<Map<String, List<atletaStart>>> futureStarts;
   late DateTime lastRefresh;
 
-
   Future<void> _refresh() {
-
-    setState((){
-
+    setState(() {
       futureStarts = fetchStart(widget.raceid);
     });
 
@@ -142,9 +117,14 @@ class _StartRouteState extends State<StartRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Start'),
-        ),
+        appBar: AppBar(title: const Text('Start'), actions: <Widget>[
+          IconButton(
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Refresh',
+              onPressed: () {
+                _refresh();
+              })
+        ]),
         body: RefreshIndicator(
           color: Colors.blueAccent,
           onRefresh: _refresh,
@@ -157,18 +137,22 @@ class _StartRouteState extends State<StartRoute> {
 
                 List<Widget> objs = [
                   Container(
-                      margin: EdgeInsets.fromLTRB(16, 10, 16, 25),
+                      margin: const EdgeInsets.fromLTRB(16, 10, 16, 25),
                       child: Text(
                           "ultimo aggiornamento:\n ${lastRefresh.toString()}",
-                          style: TextStyle(fontSize: 15.0))),
+                          style: const TextStyle(fontSize: 15.0))),
                   ...atleti.keys.map((classid) => ExpansionTile(
-                    title: Text(classid, style:  TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic)),
-                    children: <Widget>[
-                      Column(
-                        children: _buildExpandableContent(atleti[classid]),
-                      ),
-                    ],
-                  ))
+                        title: Text(classid,
+                            style: const TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic)),
+                        children: <Widget>[
+                          Column(
+                            children: _buildExpandableContent(atleti[classid]),
+                          ),
+                        ],
+                      ))
                 ];
 
                 return ListView.builder(
@@ -177,21 +161,19 @@ class _StartRouteState extends State<StartRoute> {
                     itemCount: objs.length,
                     itemBuilder: ((context, index) => objs[index]));
               } else if (snapshot.hasError) {
-
                 online = false;
 
                 return ListView.builder(
                     itemCount: 1,
                     itemBuilder: (context, index) =>
-                        ConnFailTile("${snapshot.error}"));
+                        ConnFailTile("StartList non presente"));
               }
 
               // By default, show a loading spinner.
               return const Center(child: CircularProgressIndicator());
             },
           ),
-        )
-    );
+        ));
   }
 
   _buildExpandableContent(List<atletaStart>? lista) {

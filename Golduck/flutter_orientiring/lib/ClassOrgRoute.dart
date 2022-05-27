@@ -1,21 +1,23 @@
+import 'dart:async';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:json_diff/json_diff.dart';
 
+import '../globals.dart';
 import 'atleta.dart';
 import 'components.dart';
-import 'globals.dart';
 
 Map<dynamic, dynamic> json1 = {};
 Map<dynamic, dynamic> json2 = {};
 List<String> differenze = [];
 bool online = false;
 
-Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
-  final response =
-      await http.get(Uri.parse('$apiUrl/results_filter?id=$raceid&class=*'));
+Future<Map<String, List<atleta>>> fetchClasses(
+    String raceid, String org) async {
+  final response = await http
+      .get(Uri.parse('$apiUrl/results_filter?id=$raceid&organisation=$org'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -39,6 +41,7 @@ Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
 
       for (var j in fetched) {
         json2[cont] = j;
+
         cont++;
       }
 
@@ -93,22 +96,23 @@ Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
   }
 }
 
-class ClassificheRoute extends StatefulWidget {
+class ClassOrgRoute extends StatefulWidget {
   final String raceid;
+  final String org;
 
-  const ClassificheRoute(this.raceid, {Key? key}) : super(key: key);
+  const ClassOrgRoute(this.raceid, this.org, {Key? key}) : super(key: key);
 
   @override
-  _ClassificheRouteState createState() => _ClassificheRouteState();
+  _ClassOrgRouteState createState() => _ClassOrgRouteState();
 }
 
-class _ClassificheRouteState extends State<ClassificheRoute> {
+class _ClassOrgRouteState extends State<ClassOrgRoute> {
   late Future<Map<String, List<atleta>>> futureRes;
   late DateTime lastRefresh;
 
   Future<void> _refresh() {
     setState(() {
-      futureRes = fetchClasses(widget.raceid);
+      futureRes = fetchClasses(widget.raceid, widget.org);
     });
 
     return futureRes;
@@ -117,7 +121,7 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
   @override
   void initState() {
     super.initState();
-    futureRes = fetchClasses(widget.raceid);
+    futureRes = fetchClasses(widget.raceid, widget.org);
     lastRefresh = DateTime.now().toLocal();
   }
 
@@ -151,11 +155,13 @@ class _ClassificheRouteState extends State<ClassificheRoute> {
                         "ultimo aggiornamento:\n ${lastRefresh.toString()}",
                         style: const TextStyle(fontSize: 15.0))),
                 ...classiDiAtleti.keys.map((classid) => ExpansionTile(
-                      title: Text(classid,
-                          style: const TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic)),
+                      title: Text(
+                        classid,
+                        style: const TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic),
+                      ),
                       children: <Widget>[
                         Column(
                           children:
@@ -192,7 +198,7 @@ _buildExpandableContent(List<atleta>? lista) {
   List<Widget> columnContent = [];
 
   for (atleta a in lista!) {
-    columnContent.add(AthleteTile(a, "club: ${a.org}"));
+    columnContent.add(AthleteTile(a));
   }
 
   return columnContent;
