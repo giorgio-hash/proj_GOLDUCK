@@ -197,6 +197,7 @@ class NavigationDrawer extends StatelessWidget {
           title: const Text('Home'),
           onTap: () {},
         ), */
+<<<<<<< HEAD
             /* ListTile(
           leading: const Icon(Icons.run_circle_outlined),
           title: const Text('List Races'),
@@ -222,4 +223,22 @@ class NavigationDrawer extends StatelessWidget {
           ],
         ),
       );
+=======
+        const Divider(color: Colors.black54,),
+        ListTile(
+          leading: const Icon(Icons.people_alt_sharp),
+          title: const Text('About us'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const about_us(),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+  );
+>>>>>>> 534d7db578a138c3e437beafa3a7fced6ef92cb9
 }
