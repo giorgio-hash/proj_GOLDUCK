@@ -11,7 +11,7 @@ exports.handler = async (event, context, callback) => {
     var results = await getXml(id);
 
     if (results.Count != 0) {
-        while (true) { // itera finchè s3 non restituisce il file in modo corretto
+        while (true) {
             try {
                 var xml = JSON.parse(parser.xml2json(results.Body.toString('utf-8'), {
                     compact: true,
@@ -29,79 +29,90 @@ exports.handler = async (event, context, callback) => {
                 if (elem.PersonResult != null) {
                     if (Array.isArray(elem.PersonResult)) {
                         for (var pRes of elem.PersonResult) {
-                            if (pRes.Organisation != null && pRes.Organisation.Name['_text'] == org)
-                                clubs.push(pRes.Person.Name.Family['_text'] + ' ' + pRes.Person.Name.Given['_text']);
-                        }
-
-                    } else {
-                        if (elem.PersonResult.Organisation != null && elem.PersonResult.Organisation.Name['_text'] == org)
-                            clubs.push(elem.PersonResult.Person.Name.Family['_text'] + ' ' + elem.PersonResult.Person.Name.Given['_text']);
                             if (pRes.Organisation != null && pRes.Organisation.Name['_text'] == org){
+                             if(pRes.Person.Id['_text'] == null)
+                                    console.log("\n\ncognome: "+ pRes.Person.Name.Family['_text']);
                                 clubs.push({
+                                    "id": pRes.Person.Id['_text'],
                                     "name": pRes.Person.Name.Given['_text'],
                                     "surname": pRes.Person.Name.Family['_text'],
+                                    "class": elem.Class == null ? 'No class' : elem.Class.Name['_text'],
                                     "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
                                     "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
                                     "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                                    "class" : elem.Class.Name['_text'],
-                                    "status" : pRes.Result.Status['_text'],
-									"numero" : pRes.Person.Id['_text']
-                                });
+                                    "status": pRes.Result.Status == null ? 'N/A' : pRes.Result.Status['_text']
+                                });   
+                                
                             }
                         }
 
                     } else {
                         if (elem.PersonResult.Organisation != null && elem.PersonResult.Organisation.Name['_text'] == org){
-                            var pRes = elem.PersonResult;
+                            if(pRes.Person.Id['_text'] == null)
+                                    console.log("\n\ncognome: "+ pRes.Person.Name.Family['_text']);
+                         
                             clubs.push({
-                                "name": pRes.Person.Name.Given['_text'],
-                                "surname": pRes.Person.Name.Family['_text'],
+                                "id": elem.PersonResult.Person.Id['_text'],
+                                "name": elem.PersonResult.Person.Name.Given['_text'],
+                                "surname": elem.PersonResult.Person.Name.Family['_text'],
+                                "class": xml.ResultList.ClassResult.Class == null ? 'No class' : xml.ResultList.ClassResult.Class.Name['_text'],
                                 "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
-                                "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
-                                "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                                "class" : elem.Class.Name['_text'],
-                                "status" : pRes.Result.Status['_text'],
-								"numero" : pRes.Person.Id['_text']
-
-                            });
+                                "position": elem.PersonResult.Result.Position == null ? 'N/A' : elem.PersonResult.Result.Position['_text'],
+                                "time": elem.PersonResult.Result.Time == null ? 'N/A' : elem.PersonResult.Result.Time['_text'],
+                                "status": elem.PersonResult.Result.Status == null ? 'N/A' : elem.PersonResult.Result.Status['_text']
+                            });   
+                            
                         }
                     }
                 }
             });
             return sendRes(200, JSON.stringify(clubs));
-
         } else if (clazz != null) {
-        } else if (clazz != null && clazz != "*") {
             var classifica = new Array();
 
             for (var clazzRes of xml.ResultList.ClassResult) {
-                if (clazzRes.Class.Name['_text'] != clazz)
-                    continue;
-                if(clazzRes.PersonResult.Person){    
-                    var pRes = clazzRes.PersonResult;
-                    classifica.push({
-                        "name": pRes.Person.Name.Given['_text'],
-                        "surname": pRes.Person.Name.Family['_text'],
-                        "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
-                        "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
-                        "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                        "class" : clazzRes.Class.Name['_text'],
-                        "status" : pRes.Result.Status['_text'],
-						"numero" : pRes.Person.Id['_text']
-
-                    });
+                
+                if(clazz != "*"){
+                    
+                    if (clazzRes.Class.Name['_text'] != clazz)
+                        continue;
                 }
-                else
-                for (var pRes of clazzRes.PersonResult) {
+                if (clazzRes.PersonResult == null)
+                    continue;
+                if (Array.isArray(clazzRes.PersonResult)) {
+                    for (var pRes of clazzRes.PersonResult) {
+                        
+                        if(pRes.Person.Id['_text'] == null)
+                                    console.log("\n\ncognome: "+ pRes.Person.Name.Family['_text']);
+                         
+                        
+                        classifica.push({
+                            "id": pRes.Person.Id['_text'],
+                            "name": pRes.Person.Name.Given['_text'],
+                            "surname": pRes.Person.Name.Family['_text'],
+                            "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
+                            "class" : clazzRes.Class.Name['_text'],
+                            "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
+                            "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
+                            "status": pRes.Result.Status == null ? 'N/A' : pRes.Result.Status['_text']
+
+                        });
+                    }
+                } else {
+                    
+                    if(pRes.Person.Id['_text'] == null)
+                                    console.log("\n\ncognome: "+ pRes.Person.Name.Family['_text']);
+                         
+                    
                     classifica.push({
-                        "name": pRes.Person.Name.Given['_text'],
-                        "surname": pRes.Person.Name.Family['_text'],
-                        "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
-                        "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
-                        "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
+                        "id": clazzRes.PersonResult.Person.Id['_text'],
+                        "name": clazzRes.PersonResult.Person.Name.Given['_text'],
+                        "surname": clazzRes.PersonResult.Person.Name.Family['_text'],
+                        "org": clazzRes.PersonResult.Organisation == null ? 'No Organisation' : clazzRes.PersonResult.Organisation.Name['_text'],
                         "class" : clazzRes.Class.Name['_text'],
-                        "status" : pRes.Result.Status['_text']
-					            	"numero" : pRes.Person.Id['_text']
+                        "position": clazzRes.PersonResult.Result.Position == null ? 'N/A' : clazzRes.PersonResult.Result.Position['_text'],
+                        "time": clazzRes.PersonResult.Result.Time == null ? 'N/A' : clazzRes.PersonResult.Result.Time['_text'],
+                        "status": clazzRes.PersonResult.Result.Status == null ? 'N/A' : clazzRes.PersonResult.Result.Status['_text']
 
                     });
                 }
@@ -110,45 +121,6 @@ exports.handler = async (event, context, callback) => {
             return sendRes(200, JSON.stringify(classifica));
 
         } else {
-        } else if(clazz == "*"){
-            
-            var classifica = new Array();
-            
-            for (var clazzRes of xml.ResultList.ClassResult) {
-                if(clazzRes.PersonResult.Person){    
-                    var pRes = clazzRes.PersonResult;
-                    classifica.push({
-                        "name": pRes.Person.Name.Given['_text'],
-                        "surname": pRes.Person.Name.Family['_text'],
-                        "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
-                        "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
-                        "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                        "class" : clazzRes.Class.Name['_text'],
-                        "status" : pRes.Result.Status['_text'],
-                        "numero" : pRes.Person.Id['_text']
-
-                    });
-                }
-                else
-                for (var pRes of clazzRes.PersonResult) {
-                    classifica.push({
-                        "name": pRes.Person.Name.Given['_text'],
-                        "surname": pRes.Person.Name.Family['_text'],
-                        "org": pRes.Organisation == null ? 'No Organisation' : pRes.Organisation.Name['_text'],
-                        "position": pRes.Result.Position == null ? 'N/A' : pRes.Result.Position['_text'],
-                        "time": pRes.Result.Time == null ? 'N/A' : pRes.Result.Time['_text'],
-                        "class" : clazzRes.Class.Name['_text'],
-                        "status" : pRes.Result.Status['_text'],
-                        "numero" : pRes.Person.Id['_text']
-
-                    });
-                }
-            }
-
-            return sendRes(200, JSON.stringify(classifica));
-            
-        }
-        else {
             return sendRes(404, "Invalid Request");
         }
     } else {

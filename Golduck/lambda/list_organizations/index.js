@@ -13,37 +13,44 @@ exports.handler = async (event) => {
     return sendRes(404, error);
   }
 
-  while (true) { // itera finchè s3 non restituisce il file in modo corretto
+  while (true) {
     try {
       var xml = JSON.parse(parser.xml2json(results.Body.toString('utf-8'), {
         compact: true,
-        ignoreComment: true,
+        ignoreComment: false,
         spaces: 2
       }));
       break;
     } catch (err) {
       results = await s3download(event.queryStringParameters.id);
     }
-
   }
 
-  var list = []
-  if(xml.ResultList.ClassResult.PersonResult)
-    list.push(xml.ResultList.ClassResult.PersonResult.Organisation.Name._text);
-  else
-    for(let i=0 ; i < xml.ResultList.ClassResult.length ; i++ )
-      if(xml.ResultList.ClassResult[i].PersonResult.Organisation)
-        list.push(xml.ResultList.ClassResult[i].PersonResult.Organisation.Name._text);
-      else
-        for(let j=0; j < xml.ResultList.ClassResult[i].PersonResult.length ; j++ )
-           list.push(xml.ResultList.ClassResult[i].PersonResult[j].Organisation.Name._text);
-         
-         
-  var uniqueArray = list.filter(function(elem, pos) {
-    return list.indexOf(elem) == pos;
-    });
 
-  return sendRes(200, JSON.stringify(uniqueArray));
+  let arr = new Array();
+  arr = xml.ResultList.ClassResult.reduce((acc, curr) => {
+    if (Array.isArray(curr.PersonResult)) {
+      acc.push(curr.PersonResult.reduce((acc2, curr2) => {
+        if (curr2.Organisation != undefined) {
+          if (acc2.indexOf(curr2.Organisation.Name['_text']) == -1)
+            acc2.push(curr2.Organisation.Name['_text'])
+        }
+        return acc2
+      }, []))
+    }
+    return acc
+  }, []);
+
+  // console.log(arr);
+  var merged = [].concat.apply([], arr);
+  let union = merged.reduce((acc, curr) => {
+    if (acc.indexOf(curr) == -1)
+      acc.push(curr)
+    return acc
+  }, [])
+
+  console.log(union.sort())
+  return sendRes(200, JSON.stringify(union.sort()));
 
 };
 
@@ -55,9 +62,12 @@ const sendRes = (status, body) => {
   var response = {
     statusCode: status,
     headers: {
-       "Content-Type" : "application/json", 
-            "Access-Control-Allow-Origin" : "*",
-            "X-Requested-With" : "*"
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+      "Access-Control-Allow-Methods": "OPTIONS,POST,PUT",
+      "Access-Control-Allow-Credentials": true,
+      "Access-Control-Allow-Origin": "*",
+      "X-Requested-With": "*"
     },
     body: body
   };

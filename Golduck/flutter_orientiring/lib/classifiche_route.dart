@@ -32,18 +32,24 @@ Future<Map<String, List<atleta>>> fetchClasses(String raceid) async {
 
       online = true;
 
+      int cont = 0;
+
       differenze.clear();
       json2.clear();
       for(var j in fetched){
-        json1[j["numero"]] =  j;
+        json1[cont] =  j;
+        cont++;
       }
 
       print("risultati: " + json1.toString());
 
     }else{
 
+      int cont=0;
+
       for(var j in fetched){
-        json2[j["numero"]] = j;
+        json2[cont] = j;
+        cont++;
       }
 
       differenze.clear();
