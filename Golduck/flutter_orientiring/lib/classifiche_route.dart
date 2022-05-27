@@ -200,8 +200,8 @@ _buildExpandableContent(List<atleta>? lista) {
 
   for (atleta a in lista!) {
     columnContent.add(differenze.contains(a.name + a.surname)
-        ? Container(color: Colors.red.shade100, child: AthleteTile(a,"club: "+ a.org))
-        : AthleteTile(a,"club: "+ a.org));
+        ? Container(color: Colors.red.shade100, child: AthleteTile(a,"club: ${a.org}"))
+        : AthleteTile(a,"club: ${a.org}"));
   }
 
   return columnContent;

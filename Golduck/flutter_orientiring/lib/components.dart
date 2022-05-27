@@ -9,7 +9,6 @@ class nextPageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
         margin: const EdgeInsets.fromLTRB(30, 5, 30, 5),
         child: ElevatedButton(
@@ -53,7 +52,7 @@ class ConnFailTile extends StatelessWidget {
           title: const Text("Errore di conessione",
               style: TextStyle(fontSize: 20.0)),
           subtitle: Text(
-              "scorri verso il basso per ricaricare la pagina\n\n ${_msg}",
+              "scorri verso il basso per ricaricare la pagina\n\n $_msg",
               style: const TextStyle(fontSize: 15.0)),
           leading: const Icon(Icons.cloud_off_sharp),
         ));
