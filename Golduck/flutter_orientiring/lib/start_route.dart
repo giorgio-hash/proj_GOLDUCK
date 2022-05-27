@@ -171,7 +171,19 @@ class _StartRouteState extends State<StartRoute> {
               return const Center(child: CircularProgressIndicator());
             },
           ),
-        ));
+        ),
+        floatingActionButton: FloatingActionButton(
+        hoverColor: Color.fromARGB(121, 133, 133, 133),
+        hoverElevation: 50,
+        tooltip: 'Return to Home',
+        elevation: 12,
+        onPressed: () {
+          Navigator.pop(context); //return to menu
+          Navigator.pop(context); //return to home
+        },
+        child: const Icon(Icons.home),
+      ),
+    );
   }
 
   _buildExpandableContent(List<atletaStart>? lista) {

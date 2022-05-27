@@ -62,56 +62,67 @@ class _OrganisationsRouteState extends State<OrganisationsRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Organizations'), actions: <Widget>[
-          IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: 'Refresh',
-              onPressed: () {
-                _refresh();
-              })
-        ]),
-        body: Center(
-          child: RefreshIndicator(
-            color: Colors.blueAccent,
-            onRefresh: _refresh,
-            child: FutureBuilder<List<String>>(
-              future: futureOrgs,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  List<String> orgs = snapshot.data!;
-                  List<AZItem> items = initList(orgs);
-                  //aggiunta header
-                  items.insert(0, AZItem("header", "_"));
+      appBar: AppBar(title: const Text('Organizations'), actions: <Widget>[
+        IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh',
+            onPressed: () {
+              _refresh();
+            })
+      ]),
+      body: Center(
+        child: RefreshIndicator(
+          color: Colors.blueAccent,
+          onRefresh: _refresh,
+          child: FutureBuilder<List<String>>(
+            future: futureOrgs,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                List<String> orgs = snapshot.data!;
+                List<AZItem> items = initList(orgs);
+                //aggiunta header
+                items.insert(0, AZItem("header", "_"));
 
-                  DateTime lastRefresh = DateTime.now().toLocal();
+                DateTime lastRefresh = DateTime.now().toLocal();
 
-                  return AzListView(
-                      data: items,
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        return index == 0
-                            ? Container(
-                                margin:
-                                    const EdgeInsets.fromLTRB(16, 10, 16, 25),
-                                child: Text(
-                                    "ultimo aggiornamento: \n ${lastRefresh.toString()}",
-                                    style: const TextStyle(fontSize: 15.0)))
-                            : nextPageButton(
-                                ResultsRoute(widget.raceid, orgs[index - 1]),
-                                orgs[index - 1]);
-                      });
-                } else if (snapshot.hasError) {
-                  return ListView.builder(
-                      itemCount: 1,
-                      itemBuilder: (context, index) =>
-                          ConnFailTile("${snapshot.error}"));
-                }
+                return AzListView(
+                    data: items,
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      return index == 0
+                          ? Container(
+                              margin: const EdgeInsets.fromLTRB(16, 10, 16, 25),
+                              child: Text(
+                                  "ultimo aggiornamento: \n ${lastRefresh.toString()}",
+                                  style: const TextStyle(fontSize: 15.0)))
+                          : nextPageButton(
+                              ResultsRoute(widget.raceid, orgs[index - 1]),
+                              orgs[index - 1]);
+                    });
+              } else if (snapshot.hasError) {
+                return ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (context, index) =>
+                        ConnFailTile("${snapshot.error}"));
+              }
 
-                // By default, show a loading spinner.
-                return const CircularProgressIndicator();
-              },
-            ),
+              // By default, show a loading spinner.
+              return const CircularProgressIndicator();
+            },
           ),
-        ));
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        hoverColor: Color.fromARGB(121, 133, 133, 133),
+        hoverElevation: 50,
+        tooltip: 'Return to Home',
+        elevation: 12,
+        onPressed: () {
+          Navigator.pop(context); //return to menu
+          Navigator.pop(context); //return to home
+        },
+        child: const Icon(Icons.home),
+      ),
+    );
   }
 }
