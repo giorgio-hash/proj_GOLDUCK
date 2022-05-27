@@ -189,14 +189,6 @@ class NavigationDrawer extends StatelessWidget {
           title: const Text('Home'),
           onTap: () {},
         ), */
-        ListTile(
-          leading: const Icon(Icons.run_circle_outlined),
-          title: const Text('List Races'),
-          onTap: () {
-            Navigator.pop(context); // close the Draw
-            Navigator.pop(context); // close the menu
-          },
-        ),
         const Divider(color: Colors.black54,),
         ListTile(
           leading: const Icon(Icons.people_alt_sharp),
